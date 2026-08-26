@@ -1,0 +1,92 @@
+EskulManager Database Setup
+==========================
+
+Database name from .env:
+- DB_CONNECTION=mysql
+- DB_DATABASE=laravel
+- DB_USERNAME=root
+- DB_PASSWORD=
+
+MySQL commands to create the database:
+
+CREATE DATABASE laravel CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE laravel;
+
+Tables:
+
+CREATE TABLE users (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    email_verified_at TIMESTAMP NULL DEFAULT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'guru', 'siswa') NOT NULL DEFAULT 'siswa',
+    remember_token VARCHAR(100) NULL DEFAULT NULL,
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY users_email_unique (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE ekskuls (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    category VARCHAR(255) NOT NULL,
+    coach VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    image VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE registrations (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id BIGINT UNSIGNED NOT NULL,
+    ekskul_id BIGINT UNSIGNED NOT NULL,
+    status ENUM('aktif', 'pending') NOT NULL DEFAULT 'aktif',
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (id),
+    KEY registrations_user_id_foreign (user_id),
+    KEY registrations_ekskul_id_foreign (ekskul_id),
+    CONSTRAINT registrations_user_id_foreign FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT registrations_ekskul_id_foreign FOREIGN KEY (ekskul_id) REFERENCES ekskuls (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE extracurriculars (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    nama VARCHAR(255) NOT NULL,
+    kategori VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+Seed data for ekskuls (from DatabaseSeeder.php):
+
+
+Note: Futsal image link broken
+INSERT INTO ekskuls (title, category, coach, description, image, created_at, updated_at) VALUES
+('Futsal', 'Olahraga', 'Coach Nur Cahyana', 'Mengasah taktik, kerja sama tim, fisik prima, dan sportivitas tinggi melalui futsal.', 'https://images.unsplash.com/photo-1536122985607-4fea00713805?w=800&q=80', NOW(), NOW()),
+('Basketball', 'Olahraga', 'Coach Nur Cahyana', 'Kembangkan akurasi tembakan dan daya tahan fisik bersama tim basket andalan sekolah.', 'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=800&q=80', NOW(), NOW()),
+('Programming', 'Teknologi', 'Pak Dede Dwinarantika', 'Belajar coding, pembuatan web, web design, aplikasi mobile, hingga persiapan LKS SMK bidang IT.', 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80', NOW(), NOW()),
+('Paduan Suara', 'Seni & Kreatif', 'Tim Kesenian', 'Mengembangkan kemampuan vokal, kerja sama tim, disiplin, dan percaya diri melalui latihan serta penampilan.', 'https://images.unsplash.com/photo-1551009175-8a68da93d5f9?w=800&q=80', NOW(), NOW()),
+('Marching Band', 'Seni & Musik', 'Bu Nenikormala', 'Latihan musikalitas instrumen tiup dan perkusi dikombinasikan dengan koreografi baris berbaris.', 'https://images.unsplash.com/photo-1573676047242-eb4871d87e07?w=800&q=80', NOW(), NOW()),
+('Paskibra', 'Kepemimpinan', 'Pak Yogarosmant', 'Pembentukan disiplin, karakter tangguh, kesolidan tim, serta persiapan upacara hari besar nasional.', 'https://images.unsplash.com/photo-1532375810709-75b1da00537c?w=800&q=80', NOW(), NOW()),
+('Pramuka', 'Kepemimpinan', 'Pak Itisar', 'Pendidikan kepanduan mandiri, survival alam, tali temali, pembentukan kepemimpinan tanggap.', 'https://images.unsplash.com/photo-1508933221946-b6bafdf6ffbe?w=800&q=80', NOW(), NOW()),
+('PMR (Palang Merah Remaja)', 'Kemanusiaan', 'Pak Elpan', 'Latihan dasar pertolongan pertama, simulasi tanggap bencana, dan kepedulian sosial terhadap kesehatan.', 'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&q=80', NOW(), NOW());
+
+Sample user insert (optional if you want a default admin):
+
+INSERT INTO users (name, email, password, role, created_at, updated_at) VALUES
+('Admin User', 'admin@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', NOW(), NOW());
+
+Alternative Laravel command:
+php artisan migrate --seed
+
+Notes:
+- This project uses MySQL by default.
+- The .env file is configured for database name 'laravel'.
+- The file app/Models/User.php allows the role field: admin, guru, siswa.
+- The table registrations connects users to ekskuls with status 'aktif' or 'pending'.
