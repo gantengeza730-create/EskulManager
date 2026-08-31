@@ -8,6 +8,7 @@ use App\Models\Ekskul;
 use App\Models\Registration;
 use Illuminate\Support\Facades\Auth; 
 use Illuminate\Support\Facades\Hash; 
+use Illuminate\Support\Facades\Storage;
 
 class MainController extends Controller
 {
@@ -111,6 +112,31 @@ class MainController extends Controller
     // Kirim kedua variabel ke view dashboard
     return view('dashboard', compact('user', 'registrations')); 
 }
+
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'class_name' => 'nullable|string|max:100',
+            'phone' => 'nullable|string|max:30',
+            'bio' => 'nullable|string|max:500',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar_path) {
+                Storage::disk('public')->delete($user->avatar_path);
+            }
+
+            $validated['avatar_path'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        $user->update($validated);
+
+        return back()->with('success', 'Profil berhasil diperbarui.');
+    }
 
     public function logout(Request $request)
     {

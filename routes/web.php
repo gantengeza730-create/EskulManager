@@ -18,6 +18,7 @@ Route::middleware('guest')->group(function () {
 // Auth Protected Routes
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard');
+    Route::post('/dashboard/profile', [MainController::class, 'updateProfile'])->name('profile.update');
     Route::get('/guru/dashboard', function () { return view('dashboard_guru'); });
     Route::get('/admin/dashboard', function () { return view('dashboard_admin'); });
     Route::post('/logout', [MainController::class, 'logout'])->name('logout');

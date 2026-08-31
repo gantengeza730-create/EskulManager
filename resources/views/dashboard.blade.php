@@ -71,7 +71,7 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     Galeri Kegiatan
                 </a>
-                <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all mt-4">
+                <a href="#" data-tab="profile" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all mt-4">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     Profil Saya
                 </a>
@@ -86,12 +86,15 @@
         <div class="p-4 bg-[#182235] mt-8 flex justify-between items-center border-t border-slate-700/50">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-full bg-slate-600 overflow-hidden border-2 border-slate-500">
-                    <!-- Placeholder Foto -->
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=0D8ABC&color=fff" alt="User" class="w-full h-full object-cover">
+                    @if($user->avatar_path)
+                        <img src="{{ asset('storage/' . $user->avatar_path) }}" data-tab="profile" alt="User" class="w-full h-full object-cover cursor-pointer" title="Buka Profil Saya">
+                    @else
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=0D8ABC&color=fff" data-tab="profile" alt="User" class="w-full h-full object-cover cursor-pointer" title="Buka Profil Saya">
+                    @endif
                 </div>
                 <div>
                     <h4 class="text-white text-sm font-bold truncate w-32">{{ auth()->user()->name ?? 'Muhe Alyaaaaaa' }}</h4>
-                    <p class="text-slate-400 text-[10px]">XII RPL 1</p>
+                    <p class="text-slate-400 text-[10px]">{{ $user->class_name ?? 'XII RPL 1' }}</p>
                 </div>
             </div>
             
@@ -122,15 +125,35 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                     <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                 </button>
-                <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=0D8ABC&color=fff" class="w-9 h-9 rounded-full border border-slate-200 cursor-pointer shadow-sm">
+                @if($user->avatar_path)
+                    <img src="{{ asset('storage/' . $user->avatar_path) }}" data-tab="profile" class="w-9 h-9 rounded-full border border-slate-200 cursor-pointer shadow-sm object-cover" alt="Foto profil" title="Buka Profil Saya">
+                @else
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'User') }}&background=0D8ABC&color=fff" data-tab="profile" class="w-9 h-9 rounded-full border border-slate-200 cursor-pointer shadow-sm object-cover" alt="Foto profil" title="Buka Profil Saya">
+                @endif
             </div>
         </header>
 
         <!-- Area Konten Isi -->
         <div class="p-8">
-            
-            <!-- Grid 4 Kartu Statistik -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            @if(session('success'))
+                <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    <ul class="list-disc pl-5 space-y-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <div id="tab-dashboard" class="space-y-8">
+                <!-- Grid 4 Kartu Statistik -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 
                 <!-- Kartu 1: Ekskul -->
                 <div class="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
@@ -181,8 +204,8 @@
                 </div>
             </div>
 
-            <!-- Area Bawah (Grafik & Widget Kanan) -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Area Bawah (Grafik & Widget Kanan) -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
                 <!-- Kolom Kiri (Lebar 2/3) -->
                 <div class="lg:col-span-2 space-y-6">
@@ -319,11 +342,117 @@
 
                 </div>
 
+                </div>
+                <!-- End Konten Bawah -->
             </div>
-            <!-- End Konten Bawah -->
+
+            <div id="tab-profile" class="hidden">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6 mb-8">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Profil Siswa</h2>
+                            <p class="text-sm text-slate-500 mt-1">Kelola nama, foto, kelas, nomor HP, dan bio singkat.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Barebones</span>
+                    </div>
+
+                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6 items-start">
+                        @csrf
+                        <div class="flex flex-col items-center text-center gap-4">
+                            <div class="w-36 h-36 rounded-full overflow-hidden border-4 border-slate-100 shadow-sm bg-slate-100">
+                                @if($user->avatar_path)
+                                    <img src="{{ asset('storage/' . $user->avatar_path) }}" alt="Foto profil" class="w-full h-full object-cover">
+                                @else
+                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name ?? 'User') }}&background=0D8ABC&color=fff&size=256" alt="Foto profil" class="w-full h-full object-cover">
+                                @endif
+                            </div>
+                            <div>
+                                <label class="inline-flex cursor-pointer items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 transition-colors">
+                                    Pilih Foto
+                                    <input type="file" name="avatar" accept="image/*" class="hidden">
+                                </label>
+                                <p class="mt-2 text-xs text-slate-500">JPG, PNG, WEBP. Maks 2MB.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Lengkap</label>
+                                <input type="text" name="name" value="{{ old('name', $user->name) }}" class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Kelas</label>
+                                <input type="text" name="class_name" value="{{ old('class_name', $user->class_name) }}" placeholder="XII RPL 1" class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Email</label>
+                                <input type="email" value="{{ $user->email }}" class="w-full rounded-2xl border-slate-200 bg-slate-50 px-4 py-3 text-sm" disabled>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">No. HP</label>
+                                <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" placeholder="08xxxxxxxxxx" class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Bio Singkat</label>
+                                <textarea name="bio" rows="4" maxlength="500" placeholder="Ceritakan minat atau targetmu di ekskul..." class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm">{{ old('bio', $user->bio) }}</textarea>
+                            </div>
+                            <div class="md:col-span-2 flex items-center gap-3">
+                                <button type="submit" class="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition-colors">Simpan Profil</button>
+                                <p class="text-xs text-slate-500">Perubahan akan langsung tersimpan di database pengguna.</p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
         </div>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = {
+                dashboard: document.getElementById('tab-dashboard'),
+                profile: document.getElementById('tab-profile'),
+            };
+
+            const navItems = Array.from(document.querySelectorAll('[data-tab]'));
+
+            function activateTab(name) {
+                Object.entries(tabs).forEach(function ([tabName, element]) {
+                    if (!element) {
+                        return;
+                    }
+
+                    element.classList.toggle('hidden', tabName !== name);
+                });
+
+                navItems.forEach(function (item) {
+                    const isActive = item.dataset.tab === name;
+                    item.classList.toggle('bg-[#2E3C51]', isActive);
+                    item.classList.toggle('text-white', isActive);
+                    item.classList.toggle('shadow-sm', isActive);
+                    item.classList.toggle('border', isActive);
+                    item.classList.toggle('border-[#3A4A62]', isActive);
+                    item.classList.toggle('text-slate-400', !isActive);
+                });
+            }
+
+            navItems.forEach(function (item) {
+                item.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    activateTab(item.dataset.tab || 'dashboard');
+                });
+            });
+
+            document.querySelectorAll('[data-tab="profile"]').forEach(function (element) {
+                element.addEventListener('click', function () {
+                    activateTab('profile');
+                });
+            });
+
+            activateTab('dashboard');
+        });
+    </script>
 
 </body>
 </html>
