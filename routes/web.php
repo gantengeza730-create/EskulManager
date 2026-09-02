@@ -6,6 +6,7 @@ use App\Http\Controllers\MainController;
 // Landing Page & Pendaftaran
 Route::get('/', [MainController::class, 'landing'])->name('landing');
 Route::post('/join/{id}', [MainController::class, 'joinEkskul'])->name('ekskul.join');
+Route::post('/cancel/{id}', [MainController::class, 'cancelEkskul'])->name('ekskul.cancel');
 
 // Auth Guest Routes
 Route::middleware('guest')->group(function () {

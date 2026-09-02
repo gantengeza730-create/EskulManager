@@ -21,12 +21,6 @@ class MainController extends Controller
         return view('landing', compact('ekskuls'));
     }
 
-    public function joinEkskul($id)
-    {
-        // Logika join ekskul yang sudah ada di projek Anda
-        return back();
-    }
-
     // ==========================================
     // 2. REGISTER (Disesuaikan dengan rute 'register')
     // ==========================================
@@ -107,11 +101,63 @@ class MainController extends Controller
     $user = Auth::user();
     
     // Ambil data pendaftaran ekskul berdasarkan user yang sedang login
-    $registrations = Registration::where('user_id', $user->id)->get(); 
+    $registrations = Registration::with('ekskul')
+        ->where('user_id', $user->id)
+        ->latest()
+        ->get();
+    $ekskuls = Ekskul::orderBy('title')->get();
 
     // Kirim kedua variabel ke view dashboard
-    return view('dashboard', compact('user', 'registrations')); 
+    return view('dashboard', compact('user', 'registrations', 'ekskuls')); 
 }
+
+    public function joinEkskul(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'siswa') {
+            return back()->withErrors([
+                'ekskul' => 'Formulir pendaftaran hanya tersedia untuk murid/student.',
+            ]);
+        }
+
+        $ekskul = Ekskul::findOrFail($id);
+
+        $exists = Registration::where('user_id', $user->id)
+            ->where('ekskul_id', $ekskul->id)
+            ->exists();
+
+        if ($exists) {
+            return back()->with('success', 'Kamu sudah terdaftar di ekskul ini.');
+        }
+
+        Registration::create([
+            'user_id' => $user->id,
+            'ekskul_id' => $ekskul->id,
+            'status' => 'pending',
+        ]);
+
+        return back()->with('success', 'Pendaftaran ekskul berhasil dikirim dan menunggu persetujuan.');
+    }
+
+    public function cancelEkskul(Request $request, $id)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'siswa') {
+            return back()->withErrors([
+                'ekskul' => 'Pembatalan pendaftaran hanya tersedia untuk murid/student.',
+            ]);
+        }
+
+        $registration = Registration::where('user_id', $user->id)
+            ->where('ekskul_id', $id)
+            ->firstOrFail();
+
+        $registration->delete();
+
+        return back()->with('success', 'Pendaftaran ekskul berhasil dibatalkan.');
+    }
 
     public function updateProfile(Request $request)
     {

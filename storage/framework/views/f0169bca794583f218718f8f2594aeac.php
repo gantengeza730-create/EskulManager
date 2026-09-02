@@ -37,12 +37,15 @@
                 </a>
                 
                 <!-- Menu Lainnya (Tidak Aktif) -->
-                <a href="#" class="flex items-center justify-between text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                <a href="#" data-tab="ekskul" class="flex items-center justify-between text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
                     <div class="flex items-center gap-3">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
                         Ekskul Saya
                     </div>
-                    <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">3</span>
+                    <?php $ekskulCount = isset($registrations) ? $registrations->count() : 0; ?>
+                    <?php if($ekskulCount > 0): ?>
+                        <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"><?php echo e($ekskulCount); ?></span>
+                    <?php endif; ?>
                 </a>
                 <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -152,6 +155,18 @@
                 </div>
             <?php endif; ?>
 
+            <?php
+                $resolveEkskulImage = function ($image) {
+                    if (!$image) {
+                        return null;
+                    }
+
+                    return \Illuminate\Support\Str::startsWith($image, ['http://', 'https://', '/'])
+                        ? $image
+                        : asset('storage/' . $image);
+                };
+            ?>
+
             <div id="tab-dashboard" class="space-y-8">
                 <!-- Grid 4 Kartu Statistik -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -164,8 +179,11 @@
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.001 2c-5.523 0-10 4.477-10 10s4.477 10 10 10 10-4.477 10-10-4.477-10-10-10zm-1.5 13.914l-3.207-3.207 1.414-1.414 1.793 1.793 4.793-4.793 1.414 1.414-6.207 6.207z"/></svg>
                         </div>
                     </div>
-                    <h2 class="text-3xl font-black text-slate-800"><?php echo e(isset($registrations) ? $registrations->count() : '3'); ?></h2>
-                    <p class="text-[10px] text-slate-400 mt-1 font-medium truncate">Futsal, Coding, Marching Band</p>
+                    <h2 class="text-3xl font-black text-slate-800"><?php echo e(isset($registrations) ? $registrations->count() : '0'); ?></h2>
+                    <p class="text-[10px] text-slate-400 mt-1 font-medium truncate">
+                        <?php echo e(isset($registrations) && $registrations->count() ? $registrations->pluck('ekskul.title')->filter()->join(', ') : 'Belum ada ekskul diikuti'); ?>
+
+                    </p>
                 </div>
 
                 <!-- Kartu 2: Kehadiran -->
@@ -231,57 +249,6 @@
                         </div>
                     </div>
 
-                    <!-- Ekstrakurikuler Saya (Daftar List) -->
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
-                        <div class="flex justify-between items-center mb-5">
-                            <h3 class="font-bold text-slate-800 text-sm">Ekstrakurikuler Saya</h3>
-                            <a href="#" class="text-xs font-bold text-blue-600 hover:underline">Kelola Ekskul</a>
-                        </div>
-                        
-                        <div class="space-y-3">
-                            <!-- List 1: Futsal -->
-                            <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-sm font-bold text-slate-800">Futsal</h4>
-                                        <p class="text-[11px] text-slate-500">Pembina: Bambang Pamungkas</p>
-                                    </div>
-                                </div>
-                                <span class="text-xs font-medium text-slate-400">Setiap Selasa & Kamis</span>
-                            </div>
-
-                            <!-- List 2: Coding -->
-                            <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-sm font-bold text-slate-800">Coding Club</h4>
-                                        <p class="text-[11px] text-slate-500">Pembina: Sandhika Galih</p>
-                                    </div>
-                                </div>
-                                <span class="text-xs font-medium text-slate-400">Setiap Rabu Sore</span>
-                            </div>
-
-                            <!-- List 3: Marching Band -->
-                            <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-sm font-bold text-slate-800">Marching Band</h4>
-                                        <p class="text-[11px] text-slate-500">Pembina: Addie MS</p>
-                                    </div>
-                                </div>
-                                <span class="text-xs font-medium text-slate-400">Setiap Jumat Sore</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Kolom Kanan (Lebar 1/3) -->
@@ -345,6 +312,119 @@
 
                 </div>
                 <!-- End Konten Bawah -->
+            </div>
+
+            <div id="tab-ekskul" class="hidden space-y-8">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Ekstrakurikuler Saya</h2>
+                            <p class="text-sm text-slate-500 mt-1">Daftar ekskul yang sudah kamu ikuti.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full"><?php echo e(isset($registrations) ? $registrations->count() : 0); ?> Ekskul</span>
+                    </div>
+
+                    <?php if(isset($registrations) && $registrations->count()): ?>
+                        <div class="space-y-3">
+                            <?php $__currentLoopData = $registrations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $registration): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <div class="flex items-center justify-between gap-4 p-4 rounded-2xl border border-slate-200 bg-slate-50/70">
+                                    <div class="flex items-center gap-4 min-w-0">
+                                        <div class="w-14 h-14 rounded-2xl bg-slate-200 overflow-hidden shrink-0">
+                                            <?php if($registration->ekskul && $registration->ekskul->image): ?>
+                                                <img src="<?php echo e($resolveEkskulImage($registration->ekskul->image)); ?>" alt="<?php echo e($registration->ekskul->title); ?>" class="w-full h-full object-cover">
+                                            <?php else: ?>
+                                                <div class="w-full h-full flex items-center justify-center bg-blue-50 text-blue-600">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <h3 class="text-sm font-bold text-slate-900 truncate"><?php echo e($registration->ekskul->title ?? 'Ekskul'); ?></h3>
+                                            <p class="text-xs text-slate-500 truncate">Pembina: <?php echo e($registration->ekskul->coach ?? '-'); ?></p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3 shrink-0">
+                                        <span class="text-xs font-medium text-slate-400 capitalize"><?php echo e($registration->status); ?></span>
+                                        <?php if(auth()->user()->role === 'siswa'): ?>
+                                            <form action="<?php echo e(route('ekskul.cancel', $registration->ekskul_id)); ?>" method="POST" onsubmit="return confirm('Batalkan pendaftaran ekskul ini?')">
+                                                <?php echo csrf_field(); ?>
+                                                <button type="submit" class="rounded-full border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-100 transition-colors">
+                                                    Cancel
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                            Belum ada ekskul yang diikuti.
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <?php if(auth()->user()->role === 'siswa'): ?>
+                    <div id="formulir-pendaftaran" class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                        <div class="flex items-center justify-between gap-4 mb-6">
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-900">Formulir Pendaftaran Ekstrakurikuler</h2>
+                                <p class="text-sm text-slate-500 mt-1">Pilih ekskul yang tersedia untuk mengajukan pendaftaran baru.</p>
+                            </div>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">Student Only</span>
+                        </div>
+
+                        <?php if(isset($ekskuls) && $ekskuls->count()): ?>
+                            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                <?php $__currentLoopData = $ekskuls; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ekskul): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <form action="<?php echo e(route('ekskul.join', $ekskul->id)); ?>" method="POST" class="rounded-2xl border border-slate-200 p-4 bg-slate-50/70 hover:bg-white transition-colors">
+                                        <?php echo csrf_field(); ?>
+                                        <div class="flex items-start gap-4">
+                                            <div class="w-14 h-14 rounded-2xl bg-blue-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                                <?php if($ekskul->image): ?>
+                                                    <img src="<?php echo e($resolveEkskulImage($ekskul->image)); ?>" alt="<?php echo e($ekskul->title); ?>" class="w-full h-full object-cover">
+                                                <?php else: ?>
+                                                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <h3 class="font-bold text-slate-900 truncate"><?php echo e($ekskul->title); ?></h3>
+                                                <p class="text-xs text-slate-500 mt-1">Pembina: <?php echo e($ekskul->coach); ?></p>
+                                                <p class="text-xs text-slate-400 mt-1"><?php echo e($ekskul->category); ?></p>
+                                            </div>
+                                        </div>
+
+                                        <p class="text-sm text-slate-600 mt-4 line-clamp-3"><?php echo e($ekskul->description); ?></p>
+
+                                        <?php
+                                            $alreadyJoined = isset($registrations) && $registrations->contains('ekskul_id', $ekskul->id);
+                                        ?>
+
+                                        <div class="mt-4 flex items-center justify-between gap-3">
+                                            <span class="text-xs font-semibold <?php echo e($alreadyJoined ? 'text-emerald-600' : 'text-slate-400'); ?>">
+                                                <?php echo e($alreadyJoined ? 'Sudah terdaftar' : 'Belum terdaftar'); ?>
+
+                                            </span>
+                                            <?php if($alreadyJoined): ?>
+                                                <button type="button" disabled class="inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-semibold text-white bg-slate-400 cursor-not-allowed transition-colors">
+                                                    Terdaftar
+                                                </button>
+                                            <?php else: ?>
+                                                <button type="submit" class="inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                                                    Daftar
+                                                </button>
+                                            <?php endif; ?>
+                                        </div>
+                                    </form>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                        <?php else: ?>
+                            <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                                Belum ada data ekskul untuk didaftarkan.
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div id="tab-profile" class="hidden">
@@ -413,6 +493,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const tabs = {
                 dashboard: document.getElementById('tab-dashboard'),
+                ekskul: document.getElementById('tab-ekskul'),
                 profile: document.getElementById('tab-profile'),
             };
 
