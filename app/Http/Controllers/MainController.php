@@ -8,7 +8,6 @@ use App\Models\Ekskul;
 use App\Models\Registration;
 use Illuminate\Support\Facades\Auth; 
 use Illuminate\Support\Facades\Hash; 
-use Illuminate\Support\Facades\Storage;
 
 class MainController extends Controller
 {
@@ -104,40 +103,25 @@ class MainController extends Controller
     // ==========================================
     public function dashboard()
 {
-    $user = Auth::user();
-    
-    // Ambil data pendaftaran ekskul berdasarkan user yang sedang login
-    $registrations = Registration::where('user_id', $user->id)->get(); 
+    // Mengambil data user yang sedang login
+    $user = auth()->user(); 
 
-    // Kirim kedua variabel ke view dashboard
-    return view('dashboard', compact('user', 'registrations')); 
+    return view('dashboard', compact('user'));
 }
 
-    public function updateProfile(Request $request)
+// Menampilkan Dashboard Guru
+    public function dashboardGuru()
     {
         $user = Auth::user();
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'class_name' => 'nullable|string|max:100',
-            'phone' => 'nullable|string|max:30',
-            'bio' => 'nullable|string|max:500',
-            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-        ]);
-
-        if ($request->hasFile('avatar')) {
-            if ($user->avatar_path) {
-                Storage::disk('public')->delete($user->avatar_path);
-            }
-
-            $validated['avatar_path'] = $request->file('avatar')->store('avatars', 'public');
-        }
-
-        $user->update($validated);
-
-        return back()->with('success', 'Profil berhasil diperbarui.');
+        return view('dashboard_guru', compact('user'));
     }
 
+    // Menampilkan Dashboard Admin
+    public function dashboardAdmin()
+    {
+        $user = Auth::user();
+        return view('dashboard_admin', compact('user'));
+    }
     public function logout(Request $request)
     {
         Auth::logout();
