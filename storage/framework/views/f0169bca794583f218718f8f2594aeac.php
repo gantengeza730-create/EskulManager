@@ -355,6 +355,26 @@
                                         <?php endif; ?>
                                     </div>
                                 </div>
+                                <details class="mt-4 rounded-2xl border border-slate-200 bg-white/80 px-4 py-3">
+                                    <summary class="cursor-pointer list-none text-xs font-semibold text-slate-700 flex items-center justify-between gap-3">
+                                        <span>Tampilan Jadwal Kegiatan Ekstrakurikuler</span>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600">Lihat</span>
+                                    </summary>
+                                    <div class="mt-4 space-y-3 border-t border-slate-100 pt-4 text-sm text-slate-600">
+                                        <div>
+                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Jadwal 1</p>
+                                            <p class="mt-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Jadwal 2</p>
+                                            <p class="mt-1">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Jadwal 3</p>
+                                            <p class="mt-1">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+                                        </div>
+                                    </div>
+                                </details>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                     <?php else: ?>
