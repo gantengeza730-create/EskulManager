@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 // Landing Page & Pendaftaran
 Route::get('/', [MainController::class, 'landing'])->name('landing');
 Route::post('/join/{id}', [MainController::class, 'joinEkskul'])->name('ekskul.join');
+Route::post('/cancel/{id}', [MainController::class, 'cancelEkskul'])->name('ekskul.cancel');
 Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 
 // Auth Guest Routes
