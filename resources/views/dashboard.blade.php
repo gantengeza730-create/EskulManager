@@ -373,6 +373,43 @@
                                         </div>
                                     </div>
                                 </details>
+                                <details class="mt-3 rounded-2xl border border-slate-200 bg-white/80 px-4 py-3">
+                                    <summary class="cursor-pointer list-none text-xs font-semibold text-slate-700 flex items-center justify-between gap-3">
+                                        <span>Detail Ekstrakurikuler</span>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Info</span>
+                                    </summary>
+                                    <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-slate-100 pt-4 text-sm text-slate-600">
+                                        <div class="rounded-xl bg-slate-50 p-4">
+                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Info</p>
+                                            <p class="mt-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante venenatis dapibus.</p>
+                                        </div>
+                                        <div class="rounded-xl bg-slate-50 p-4">
+                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Syarat</p>
+                                            <ul class="mt-2 list-disc pl-4 space-y-1">
+                                                <li>Lorem ipsum dolor sit amet.</li>
+                                                <li>Consectetur adipiscing elit.</li>
+                                                <li>Sed do eiusmod tempor incididunt.</li>
+                                            </ul>
+                                        </div>
+                                        <div class="rounded-xl bg-slate-50 p-4">
+                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Anggota</p>
+                                            @php
+                                                $members = isset($ekskulMembers)
+                                                    ? $ekskulMembers->where('ekskul_id', $registration->ekskul_id)->pluck('user.name')->filter()->unique()
+                                                    : collect();
+                                            @endphp
+                                            @if($members->count())
+                                                <ul class="mt-2 space-y-1">
+                                                    @foreach($members as $member)
+                                                        <li class="rounded-lg bg-white px-3 py-2 text-slate-700 border border-slate-200">{{ $member }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            @else
+                                                <p class="mt-2">Belum ada anggota yang terdaftar.</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </details>
                             @endforeach
                         </div>
                     @else

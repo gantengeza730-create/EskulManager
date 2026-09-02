@@ -105,10 +105,14 @@ class MainController extends Controller
         ->where('user_id', $user->id)
         ->latest()
         ->get();
+    $ekskulMembers = Registration::with('user')
+        ->whereIn('ekskul_id', $registrations->pluck('ekskul_id'))
+        ->latest()
+        ->get();
     $ekskuls = Ekskul::orderBy('title')->get();
 
     // Kirim kedua variabel ke view dashboard
-    return view('dashboard', compact('user', 'registrations', 'ekskuls')); 
+    return view('dashboard', compact('user', 'registrations', 'ekskulMembers', 'ekskuls')); 
 }
 
     public function joinEkskul(Request $request, $id)
