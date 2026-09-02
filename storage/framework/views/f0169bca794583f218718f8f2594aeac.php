@@ -47,7 +47,7 @@
                         <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"><?php echo e($ekskulCount); ?></span>
                     <?php endif; ?>
                 </a>
-                <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                <a href="#" data-tab="jadwal" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     Jadwal Latihan
                 </a>
@@ -577,6 +577,53 @@
                 </div>
             </div>
 
+            <div id="tab-jadwal" class="hidden space-y-8">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Jadwal Latihan</h2>
+                            <p class="text-sm text-slate-500 mt-1">Jadwal kegiatan hanya untuk ekskul yang sudah kamu terdaftar.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Registered Only</span>
+                    </div>
+
+                    <?php if(isset($registrations) && $registrations->count()): ?>
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            <?php $__currentLoopData = $registrations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $registration): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-5">
+                                    <div class="flex items-start justify-between gap-3 mb-4">
+                                        <div>
+                                            <h3 class="font-bold text-slate-900"><?php echo e($registration->ekskul->title ?? 'Ekskul'); ?></h3>
+                                            <p class="text-xs text-slate-500 mt-1">Pembina: <?php echo e($registration->ekskul->coach ?? '-'); ?></p>
+                                        </div>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full"><?php echo e($registration->status); ?></span>
+                                    </div>
+
+                                    <div class="space-y-3 text-sm text-slate-600">
+                                        <div class="rounded-xl bg-white border border-slate-200 p-3">
+                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Jadwal 1</p>
+                                            <p class="mt-1">Lorem ipsum dolor sit amet, Senin 15.00 - 17.00 WIB, lokasi latihan utama.</p>
+                                        </div>
+                                        <div class="rounded-xl bg-white border border-slate-200 p-3">
+                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Jadwal 2</p>
+                                            <p class="mt-1">Lorem ipsum dolor sit amet, Rabu 15.30 - 17.30 WIB, pemantapan materi dan simulasi.</p>
+                                        </div>
+                                        <div class="rounded-xl bg-white border border-slate-200 p-3">
+                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Jadwal 3</p>
+                                            <p class="mt-1">Lorem ipsum dolor sit amet, Jumat 14.00 - 16.00 WIB, evaluasi mingguan anggota.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                            Belum ada ekskul yang diikuti, jadi jadwal latihan belum tersedia.
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -584,6 +631,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const tabs = {
                 dashboard: document.getElementById('tab-dashboard'),
+                jadwal: document.getElementById('tab-jadwal'),
                 ekskul: document.getElementById('tab-ekskul'),
                 profile: document.getElementById('tab-profile'),
                 settings: document.getElementById('tab-settings'),
