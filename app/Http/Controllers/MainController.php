@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Ekskul;
 use App\Models\Registration;
+use App\Models\AttendanceRecord;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth; 
 use Illuminate\Support\Facades\Hash; 
+use Illuminate\Support\Facades\Storage;
 
 class MainController extends Controller
 {
@@ -100,7 +103,7 @@ class MainController extends Controller
     $user = Auth::user();
     
     // Ambil data pendaftaran ekskul berdasarkan user yang sedang login
-    $registrations = Registration::with('ekskul')
+    $registrations = Registration::with(['ekskul', 'user'])
         ->where('user_id', $user->id)
         ->latest()
         ->get();
@@ -109,10 +112,130 @@ class MainController extends Controller
         ->latest()
         ->get();
     $ekskuls = Ekskul::orderBy('title')->get();
+    $attendanceRecords = AttendanceRecord::with('ekskul')
+        ->where('user_id', $user->id)
+        ->orderByDesc('attendance_date')
+        ->orderByDesc('id')
+        ->get();
+
+    $currentMonthStart = Carbon::now()->startOfMonth();
+    $currentMonthEnd = Carbon::now()->endOfMonth();
+    $currentMonthAttendance = $attendanceRecords->filter(function ($attendance) use ($currentMonthStart, $currentMonthEnd) {
+        return $attendance->status === 'hadir'
+            && $attendance->attendance_date->betweenIncluded($currentMonthStart, $currentMonthEnd);
+    });
+
+    $currentMonthDays = collect(range(1, Carbon::now()->daysInMonth))->mapWithKeys(function ($day) {
+        $date = Carbon::now()->copy()->startOfMonth()->addDays($day - 1)->toDateString();
+
+        return [$date => 0];
+    });
+
+    $monthlyAttendanceByDate = $currentMonthDays->merge(
+        $currentMonthAttendance->groupBy(function ($attendance) {
+            return $attendance->attendance_date->toDateString();
+        })->map->count()
+    );
+
+    $attendanceStatsByEkskul = $registrations->map(function ($registration) use ($attendanceRecords, $currentMonthStart, $currentMonthEnd) {
+        $ekskulAttendance = $attendanceRecords->where('ekskul_id', $registration->ekskul_id)
+            ->filter(function ($attendance) use ($currentMonthStart, $currentMonthEnd) {
+                return $attendance->status === 'hadir'
+                    && $attendance->attendance_date->betweenIncluded($currentMonthStart, $currentMonthEnd);
+            });
+
+        return [
+            'registration_id' => $registration->id,
+            'ekskul_id' => $registration->ekskul_id,
+            'title' => $registration->ekskul->title ?? 'Ekskul',
+            'present_count' => $ekskulAttendance->count(),
+        ];
+    })->values();
+
+    $firstRegistrationDate = $registrations->min('created_at');
+    $totalDaysFromFirstJoin = $firstRegistrationDate
+        ? max(1, Carbon::parse($firstRegistrationDate)->startOfDay()->diffInDays(Carbon::today()) + 1)
+        : 0;
+    $presentCount = $attendanceRecords->where('status', 'hadir')->count();
+    $attendancePercentage = $totalDaysFromFirstJoin > 0
+        ? 100 * round($presentCount / $totalDaysFromFirstJoin)
+        : 0;
 
     // Kirim kedua variabel ke view dashboard
-    return view('dashboard', compact('user', 'registrations', 'ekskulMembers', 'ekskuls')); 
+    return view('dashboard', compact('user', 'registrations', 'ekskulMembers', 'ekskuls', 'attendanceRecords', 'presentCount', 'totalDaysFromFirstJoin', 'attendancePercentage', 'monthlyAttendanceByDate', 'attendanceStatsByEkskul', 'currentMonthStart', 'currentMonthEnd')); 
 }
+
+    public function markAttendance(Request $request, $registrationId)
+    {
+        $user = Auth::user();
+        $registration = Registration::with('ekskul')->where('user_id', $user->id)->findOrFail($registrationId);
+        $today = Carbon::today()->toDateString();
+        $existingAttendance = AttendanceRecord::where('registration_id', $registration->id)
+            ->where('attendance_date', $today)
+            ->first();
+
+        $request->validate([
+            'status' => 'required|in:hadir,sakit_izin',
+            'proof' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        if ($existingAttendance && $existingAttendance->status === 'hadir' && $request->status === 'hadir') {
+            return back()->withErrors([
+                'attendance' => 'Kamu sudah tercatat hadir hari ini dan tidak bisa hadir lagi sebelum pergantian hari.',
+            ]);
+        }
+
+        $proofPath = null;
+
+        if ($request->hasFile('proof')) {
+            $proofPath = $request->file('proof')->store('attendance-proofs', 'public');
+        }
+
+        AttendanceRecord::updateOrCreate(
+            [
+                'registration_id' => $registration->id,
+                'attendance_date' => $today,
+            ],
+            [
+                'user_id' => $user->id,
+                'ekskul_id' => $registration->ekskul_id,
+                'status' => $request->status,
+                'proof' => $proofPath,
+            ]
+        );
+
+        return back()->with('success', 'Kehadiran hari ini berhasil disimpan.');
+    }
+
+    public function autoMarkAbsentForToday(): int
+    {
+        $today = Carbon::today()->toDateString();
+
+        $registrations = Registration::query()->get();
+        $created = 0;
+
+        foreach ($registrations as $registration) {
+            $exists = AttendanceRecord::where('registration_id', $registration->id)
+                ->where('attendance_date', $today)
+                ->exists();
+
+            if ($exists) {
+                continue;
+            }
+
+            AttendanceRecord::create([
+                'registration_id' => $registration->id,
+                'user_id' => $registration->user_id,
+                'ekskul_id' => $registration->ekskul_id,
+                'attendance_date' => $today,
+                'status' => 'tidak_hadir',
+            ]);
+
+            $created++;
+        }
+
+        return $created;
+    }
 
     public function joinEkskul(Request $request, $id)
     {

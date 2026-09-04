@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
     // Siswa
     Route::middleware('role:siswa')->group(function () {
         Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard.siswa');
+        Route::post('/dashboard/attendance/{registration}', [MainController::class, 'markAttendance'])->name('attendance.mark');
     });
 
     // Guru

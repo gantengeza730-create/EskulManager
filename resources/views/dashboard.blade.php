@@ -51,7 +51,7 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     Jadwal Latihan
                 </a>
-                <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                <a href="#" data-tab="kehadiran" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     Kehadiran
                 </a>
@@ -164,6 +164,31 @@
                         ? $image
                         : asset('storage/' . $image);
                 };
+
+                $attendancePercentDisplay = isset($attendancePercentage)
+                    ? number_format($attendancePercentage, 0)
+                    : '0';
+
+                $attendancePercentValue = isset($attendancePercentage)
+                    ? max(0, min(100, (int) round($attendancePercentage)))
+                    : 0;
+
+                if ($attendancePercentValue >= 90) {
+                    $attendanceLetterGrade = 'A';
+                } elseif ($attendancePercentValue >= 80) {
+                    $attendanceLetterGrade = 'B';
+                } elseif ($attendancePercentValue >= 70) {
+                    $attendanceLetterGrade = 'C';
+                } elseif ($attendancePercentValue >= 60) {
+                    $attendanceLetterGrade = 'D';
+                } else {
+                    $attendanceLetterGrade = 'F';
+                }
+
+                $gradientRed = (int) round(239 - (($attendancePercentValue / 100) * (239 - 34)));
+                $gradientGreen = (int) round(68 + (($attendancePercentValue / 100) * (197 - 68)));
+                $gradientBlue = (int) round(68 - (($attendancePercentValue / 100) * (68 - 94)));
+                $attendanceColor = 'rgb(' . $gradientRed . ', ' . $gradientGreen . ', ' . $gradientBlue . ')';
             @endphp
 
             <div id="tab-dashboard" class="space-y-8">
@@ -192,8 +217,12 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                         </div>
                     </div>
-                    <h2 class="text-3xl font-black text-slate-800">85%</h2>
-                    <p class="text-[10px] text-slate-400 mt-1 font-medium">Sangat Baik (Kategori A)</p>
+                    <h2 class="text-3xl font-black" style="color: {{ $attendanceColor }};">{{ $attendancePercentDisplay }}%</h2>
+                    <p class="text-[10px] font-bold mt-1" style="color: {{ $attendanceColor }};">Nilai: {{ $attendanceLetterGrade }}</p>
+                    <div class="mt-3 h-2 rounded-full bg-slate-100 overflow-hidden">
+                        <div class="h-full rounded-full" style="width: {{ $attendancePercentValue }}%; background: linear-gradient(90deg, rgb(239,68,68) 0%, rgb(234,179,8) 55%, rgb(34,197,94) 100%);"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2 font-medium">Berdasarkan hadir / total hari dari pertama daftar</p>
                 </div>
 
                 <!-- Kartu 3: Agenda -->
@@ -227,23 +256,74 @@
                 <!-- Kolom Kiri (Lebar 2/3) -->
                 <div class="lg:col-span-2 space-y-6">
                     
-                    <!-- Grafik Placeholder (Sesuai Gambar) -->
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 h-64 flex flex-col">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="font-bold text-slate-800 text-sm">Keaktifan Latihan (Menit/Bulan)</h3>
-                            <div class="flex items-center gap-2">
+                    <!-- Grafik Keaktifan Latihan Bulan Ini -->
+                    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 flex flex-col">
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">Keaktifan Latihan Bulan Ini</h3>
+                                <p class="text-[11px] text-slate-500 mt-1">Berdasarkan jumlah hadir hari ini per bulan.</p>
+                            </div>
+                            <div class="flex items-center gap-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                                 <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                                <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Kehadiran</span>
+                                Hadir
                             </div>
                         </div>
-                        <!-- Bar Chart Simulation CSS -->
-                        <div class="flex-1 flex items-end justify-between px-8 gap-4 pb-2">
-                            <div class="w-8 bg-slate-200 rounded-t-sm h-16 relative"><span class="absolute -bottom-6 text-[10px] font-bold text-slate-400 left-1/2 -translate-x-1/2">Jan</span></div>
-                            <div class="w-8 bg-slate-200 rounded-t-sm h-24 relative"><span class="absolute -bottom-6 text-[10px] font-bold text-slate-400 left-1/2 -translate-x-1/2">Feb</span></div>
-                            <div class="w-8 bg-blue-500 rounded-t-sm h-32 relative"><span class="absolute -bottom-6 text-[10px] font-bold text-slate-800 left-1/2 -translate-x-1/2">Mar</span></div>
-                            <div class="w-8 bg-slate-200 rounded-t-sm h-20 relative"><span class="absolute -bottom-6 text-[10px] font-bold text-slate-400 left-1/2 -translate-x-1/2">Apr</span></div>
-                            <div class="w-8 bg-slate-200 rounded-t-sm h-12 relative"><span class="absolute -bottom-6 text-[10px] font-bold text-slate-400 left-1/2 -translate-x-1/2">Mei</span></div>
-                            <div class="w-8 bg-slate-200 rounded-t-sm h-8 relative"><span class="absolute -bottom-6 text-[10px] font-bold text-slate-400 left-1/2 -translate-x-1/2">Jun</span></div>
+
+                        @php
+                            $monthlyAttendanceMax = max(1, collect($monthlyAttendanceByDate ?? [])->max());
+                            $monthlyAttendanceBars = collect($monthlyAttendanceByDate ?? [])->map(function ($count, $date) use ($monthlyAttendanceMax) {
+                                return [
+                                    'date' => \Illuminate\Support\Carbon::parse($date),
+                                    'count' => $count,
+                                    'height' => max(8, round(($count / $monthlyAttendanceMax) * 100)),
+                                ];
+                            });
+                            $selectedEkskulStatId = $attendanceStatsByEkskul->first()['registration_id'] ?? null;
+                        @endphp
+
+                        <div class="grid grid-cols-12 gap-3 items-end h-64">
+                            @foreach($monthlyAttendanceBars as $bar)
+                                <div class="col-span-1 flex flex-col items-center justify-end h-full">
+                                    <div class="w-full max-w-[18px] flex-1 flex items-end">
+                                        <div class="w-full rounded-t-md bg-blue-500 transition-all" style="height: {{ $bar['height'] }}%"></div>
+                                    </div>
+                                    <div class="mt-2 text-[10px] font-semibold text-slate-400">{{ $bar['date']->format('d') }}</div>
+                                    <div class="text-[9px] text-slate-500">{{ $bar['count'] }}</div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-800">Stats per Ekskul</h4>
+                                    <p class="text-[11px] text-slate-500 mt-1">Pilih ekskul untuk melihat hadir bulan ini.</p>
+                                </div>
+                                <select id="attendance-ekskul-select" class="rounded-full border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 focus:border-blue-500 focus:ring-blue-500">
+                                    @foreach($attendanceStatsByEkskul as $stat)
+                                        <option value="attendance-ekskul-{{ $stat['registration_id'] }}" @selected($stat['registration_id'] === $selectedEkskulStatId)>
+                                            {{ $stat['title'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="space-y-3">
+                                @foreach($attendanceStatsByEkskul as $stat)
+                                    <div id="attendance-ekskul-{{ $stat['registration_id'] }}" class="attendance-ekskul-panel {{ $stat['registration_id'] === $selectedEkskulStatId ? '' : 'hidden' }}">
+                                        <div class="flex items-center justify-between gap-3">
+                                            <div>
+                                                <p class="text-sm font-semibold text-slate-900">{{ $stat['title'] }}</p>
+                                                <p class="text-[11px] text-slate-500">Hadir bulan ini</p>
+                                            </div>
+                                            <span class="text-xl font-black text-slate-800">{{ $stat['present_count'] }}</span>
+                                        </div>
+                                        <div class="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
+                                            <div class="h-full rounded-full bg-blue-500" style="width: {{ max(8, min(100, $stat['present_count'] * 10)) }}%"></div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
 
@@ -621,6 +701,110 @@
                 </div>
             </div>
 
+            <div id="tab-kehadiran" class="hidden space-y-8">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">History Kehadiran</h2>
+                            <p class="text-sm text-slate-500 mt-1">Catatan hadir dan tidak hadir untuk setiap ekskul yang kamu ikuti.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">{{ isset($attendanceRecords) ? $attendanceRecords->count() : 0 }} Catatan</span>
+                    </div>
+
+                    @if(isset($registrations) && $registrations->count())
+                        <div class="space-y-4">
+                            @foreach($registrations as $registration)
+                                @php
+                                    $registrationAttendance = isset($attendanceRecords)
+                                        ? $attendanceRecords->where('registration_id', $registration->id)
+                                        : collect();
+                                    $todayAttendance = $registrationAttendance->firstWhere('attendance_date', \Illuminate\Support\Carbon::today()->toDateString());
+                                    $todayStatus = $todayAttendance->status ?? null;
+                                @endphp
+
+                                <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-5">
+                                    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                                        <div>
+                                            <h3 class="font-bold text-slate-900">{{ $registration->ekskul->title ?? 'Ekskul' }}</h3>
+                                            <p class="text-xs text-slate-500 mt-1">Pembina: {{ $registration->ekskul->coach ?? '-' }}</p>
+                                        </div>
+                                        <div class="flex flex-wrap gap-2">
+                                            @if($todayStatus === 'hadir')
+                                                <button type="button" disabled class="rounded-full bg-slate-300 px-4 py-2 text-xs font-semibold text-slate-600 cursor-not-allowed">
+                                                    Sudah Hadir Hari Ini
+                                                </button>
+                                            @else
+                                                <form action="{{ route('attendance.mark', $registration->id) }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <input type="hidden" name="status" value="hadir">
+                                                    <button type="submit" class="rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors">
+                                                        Hadir Hari Ini
+                                                    </button>
+                                                </form>
+                                            @endif
+                                            <form action="{{ route('attendance.mark', $registration->id) }}" method="POST" enctype="multipart/form-data" class="rounded-full border border-amber-200 bg-amber-50 px-3 py-2">
+                                                @csrf
+                                                <input type="hidden" name="status" value="sakit_izin">
+                                                <div class="flex flex-col gap-2">
+                                                    <button type="submit" class="rounded-full bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700 transition-colors">
+                                                        Sakit/Izin
+                                                    </button>
+                                                    <input type="file" name="proof" accept="image/*,.pdf" class="block w-44 text-[11px] text-slate-500 file:mr-3 file:rounded-full file:border-0 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-700">
+                                                    <p class="text-[10px] text-slate-500">Unggah bukti jika sakit atau izin.</p>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <div class="rounded-xl bg-white border border-slate-200 p-4">
+                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Status Hari Ini</p>
+                                            <p class="mt-2 text-sm font-semibold text-slate-900">{{ $todayAttendance ? ucfirst(str_replace('_', ' ', $todayAttendance->status)) : 'Belum diisi' }}</p>
+                                        </div>
+                                        <div class="rounded-xl bg-white border border-slate-200 p-4">
+                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Hadir</p>
+                                            <p class="mt-2 text-sm font-semibold text-slate-900">{{ $registrationAttendance->where('status', 'hadir')->count() }}</p>
+                                        </div>
+                                        <div class="rounded-xl bg-white border border-slate-200 p-4">
+                                            <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Tidak Hadir</p>
+                                            <p class="mt-2 text-sm font-semibold text-slate-900">{{ $registrationAttendance->where('status', 'tidak_hadir')->count() }}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                                        <div class="border-b border-slate-200 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">Riwayat</div>
+                                        @if($registrationAttendance->count())
+                                            <div class="divide-y divide-slate-100">
+                                                @foreach($registrationAttendance as $attendance)
+                                                    <div class="flex items-center justify-between gap-4 px-4 py-3">
+                                                        <div>
+                                                            <p class="text-sm font-semibold text-slate-900">{{ $attendance->attendance_date->format('d M Y') }}</p>
+                                                            <p class="text-xs text-slate-500">{{ $registration->ekskul->title ?? 'Ekskul' }}</p>
+                                                            @if($attendance->proof)
+                                                                <a href="{{ asset('storage/' . $attendance->proof) }}" target="_blank" class="text-[10px] font-semibold text-blue-600 hover:underline">Lihat bukti</a>
+                                                            @endif
+                                                        </div>
+                                                        <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {{ $attendance->status === 'hadir' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700' }}">
+                                                            {{ ucfirst(str_replace('_', ' ', $attendance->status)) }}
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="px-4 py-5 text-sm text-slate-500">Belum ada history kehadiran untuk ekskul ini.</div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                            Belum ada ekskul yang diikuti, jadi history kehadiran belum tersedia.
+                        </div>
+                    @endif
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -629,12 +813,14 @@
             const tabs = {
                 dashboard: document.getElementById('tab-dashboard'),
                 jadwal: document.getElementById('tab-jadwal'),
+                kehadiran: document.getElementById('tab-kehadiran'),
                 ekskul: document.getElementById('tab-ekskul'),
                 profile: document.getElementById('tab-profile'),
                 settings: document.getElementById('tab-settings'),
             };
 
             const navItems = Array.from(document.querySelectorAll('[data-tab]'));
+            const attendanceEkskulSelect = document.getElementById('attendance-ekskul-select');
 
             function activateTab(name) {
                 Object.entries(tabs).forEach(function ([tabName, element]) {
@@ -663,13 +849,24 @@
                 });
             });
 
+            if (attendanceEkskulSelect) {
+                const attendancePanels = Array.from(document.querySelectorAll('.attendance-ekskul-panel'));
+
+                attendanceEkskulSelect.addEventListener('change', function () {
+                    attendancePanels.forEach(function (panel) {
+                        panel.classList.toggle('hidden', panel.id !== attendanceEkskulSelect.value);
+                    });
+                });
+            }
+
             document.querySelectorAll('[data-tab="profile"]').forEach(function (element) {
                 element.addEventListener('click', function () {
                     activateTab('profile');
                 });
             });
 
-            activateTab('dashboard');
+            const initialTab = window.location.hash.replace('#', '') || 'dashboard';
+            activateTab(tabs[initialTab] ? initialTab : 'dashboard');
         });
     </script>
 
