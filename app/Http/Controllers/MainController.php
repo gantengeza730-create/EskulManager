@@ -168,6 +168,12 @@ class MainController extends Controller
         return view('dashboard_guru', compact('user'));
     }
 
+    public function dashboardGuru()
+    {
+        $user = Auth::user();
+        return view('dashboard_guru', compact('user'));
+    }
+
     // Menampilkan Dashboard Admin
     public function dashboardAdmin()
     {
