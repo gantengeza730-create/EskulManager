@@ -288,7 +288,31 @@ class MainController extends Controller
     public function updateProfile(Request $request)
     {
         $user = Auth::user();
-        return view('dashboard_guru', compact('user'));
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'class_name' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:30',
+            'bio' => 'nullable|string|max:500',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        $user->name = $validated['name'];
+        $user->class_name = $validated['class_name'] ?? null;
+        $user->phone = $validated['phone'] ?? null;
+        $user->bio = $validated['bio'] ?? null;
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar_path) {
+                Storage::disk('public')->delete($user->avatar_path);
+            }
+
+            $user->avatar_path = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        $user->save();
+
+        return back()->with('success', 'Profil berhasil diperbarui.');
     }
 
     public function dashboardGuru()

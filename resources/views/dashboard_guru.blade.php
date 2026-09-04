@@ -3,343 +3,594 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard - Eskul SMK</title>
+    <title>Dashboard Guru - EkskulSMK</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased flex h-screen overflow-hidden">
+<body class="bg-slate-50 min-h-screen flex overflow-hidden text-slate-800">
 
-    <!-- SIDEBAR -->
-    <aside class="w-64 bg-[#111c33] text-gray-300 flex flex-col justify-between hidden md:flex shrink-0">
+    <aside class="w-64 bg-[#1E293B] flex flex-col justify-between shrink-0 h-screen overflow-y-auto">
         <div>
-            <!-- Logo Brand -->
-            <div class="px-6 py-6 flex items-center gap-3 border-b border-gray-800">
-                <div class="bg-blue-600 text-white p-2 rounded-lg font-bold text-lg"><i class="fa-solid fa-shield-halved"></i></div>
-                <div>
-                    <h1 class="text-white font-bold text-lg tracking-wide">Eskul SMK</h1>
+            <a href="/" class="p-6 flex items-center gap-3">
+                <div class="bg-blue-500 p-2 rounded-lg text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 </div>
-            </div>
+                <span class="text-white font-bold text-lg tracking-wide">Ekskul<span class="text-blue-400">SMK</span></span>
+            </a>
 
-            <!-- Menu Navigasi Guru (Lengkap) -->
-            <nav class="px-4 py-4 space-y-1 text-sm max-h-[calc(100vh-180px)] overflow-y-auto">
-                <a href="#" class="flex items-center gap-3 px-4 py-3 bg-blue-600 text-white rounded-xl font-medium shadow-lg shadow-blue-600/30">
-                    <i class="fa-solid fa-grid-2"></i> Dashboard
+            <nav class="px-4 space-y-1 mt-2">
+                <a href="#" data-tab="dashboard" class="flex items-center gap-3 bg-[#2E3C51] text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm border border-[#3A4A62]">
+                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    Dashboard
                 </a>
-                <a href="#" class="flex items-center justify-between px-4 py-3 hover:bg-gray-800/60 rounded-xl transition text-gray-400 hover:text-white">
-                    <span class="flex items-center gap-3"><i class="fa-solid fa-users-viewfinder"></i> Ekstrakurikuler Saya</span>
-                    <span class="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">1</span>
+
+                <a href="#" data-tab="anggota" class="flex items-center justify-between text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
+                        Anggota
+                    </div>
+                    <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">45</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/60 rounded-xl transition text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-user-group"></i> Anggota
+
+                <a href="#" data-tab="jadwal" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Jadwal Latihan
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/60 rounded-xl transition text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-calendar-days"></i> Jadwal Latihan
+
+                <a href="#" data-tab="kehadiran" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Kehadiran
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/60 rounded-xl transition text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-clipboard-user"></i> Kehadiran
+
+                <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Nilai & Rapor
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/60 rounded-xl transition text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-award"></i> Penilaian & Rapor
+
+                <a href="#" class="flex items-center justify-between text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                        Sertifikat
+                    </div>
+                    <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Baru</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/60 rounded-xl transition text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-chart-pie"></i> Laporan Kegiatan
+
+                <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                    Pengumuman
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/60 rounded-xl transition text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-bullhorn"></i> Buat Pengumuman
+
+                <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    Galeri Kegiatan
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/60 rounded-xl transition text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-file-certificate"></i> Permintaan Sertifikat
+
+                <a href="#" data-tab="profile" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all mt-4">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    Profil Saya
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/60 rounded-xl transition text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-images"></i> Galeri Dokumentasi
-                </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/60 rounded-xl transition text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-user"></i> Profil Pembina
-                </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/60 rounded-xl transition text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-gear"></i> Pengaturan
+
+                <a href="#" data-tab="settings" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Pengaturan
                 </a>
             </nav>
         </div>
 
-        <!-- Profil User di Sidebar Bawah & Tombol Logout -->
-        <div class="p-4 border-t border-gray-800 flex items-center justify-between bg-[#0e1628]">
+        <div class="p-4 bg-[#182235] mt-8 flex justify-between items-center border-t border-slate-700/50">
             <div class="flex items-center gap-3">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="w-10 h-10 rounded-full object-cover border border-gray-700" alt="Avatar">
+                <div class="w-9 h-9 rounded-full bg-slate-600 overflow-hidden border-2 border-slate-500">
+                    @if($user->avatar_path)
+                        <img src="{{ asset('storage/' . $user->avatar_path) }}" data-tab="profile" alt="User" class="w-full h-full object-cover cursor-pointer" title="Buka Profil Saya">
+                    @else
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name ?? 'User') }}&background=0D8ABC&color=fff" data-tab="profile" alt="User" class="w-full h-full object-cover cursor-pointer" title="Buka Profil Saya">
+                    @endif
+                </div>
                 <div>
-                    <h4 class="text-white text-sm font-semibold">{{ $user->name ?? 'Pak Nur' }}</h4>
-                    <p class="text-xs text-blue-400">Pembina Futsal</p>
+                    <h4 class="text-white text-sm font-bold truncate w-32">{{ $user->name ?? 'Pembina Futsal' }}</h4>
+                    <p class="text-slate-400 text-[10px]">{{ $user->class_name ?? 'Pembina Ekstrakurikuler' }}</p>
                 </div>
             </div>
-            <!-- Form Logout -->
+
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="text-gray-400 hover:text-red-400 transition p-2" title="Keluar">
-                    <i class="fa-solid fa-right-from-bracket text-lg"></i>
+                <button type="submit" class="text-slate-400 hover:text-white transition-colors" title="Keluar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                 </button>
             </form>
         </div>
     </aside>
 
-    <!-- KONTEN UTAMA -->
     <main class="flex-1 flex flex-col h-screen overflow-y-auto">
-        
-        <!-- Header Atas -->
-        <header class="bg-white px-8 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 z-10">
-            <div class="text-xs text-gray-400 font-semibold tracking-wider uppercase">
-                05 — Teacher Dashboard
+        <header class="bg-white/80 backdrop-blur-md sticky top-0 z-10 px-8 py-5 border-b border-slate-200 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Selamat Datang, {{ $user->name ?? 'Pembina Futsal' }}</h1>
+                <p class="text-xs text-slate-500 mt-1 font-medium">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }} &bull; Kelola ektrakurikuler dan rekap aktivitas</p>
             </div>
+
             <div class="flex items-center gap-4">
-                <!-- Search Bar -->
-                <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                    </span>
-                    <input type="text" placeholder="Cari data siswa atau jadwal..." class="bg-gray-50 border border-gray-200 rounded-full pl-9 pr-4 py-1.5 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
+                <div class="relative hidden md:block">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <input type="text" placeholder="Cari siswa atau jadwal..." class="pl-9 pr-4 py-2 border border-slate-200 rounded-full text-sm bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none w-64 transition-all">
                 </div>
-                <!-- Notifikasi -->
-                <button class="w-9 h-9 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-100 transition relative">
-                    <span class="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full"></span>
-                    <i class="fa-regular fa-bell text-sm"></i>
+
+                <button class="relative p-2 text-slate-400 hover:text-slate-600 rounded-full border border-slate-200 bg-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                 </button>
-                <!-- Avatar Kanan -->
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="w-9 h-9 rounded-full object-cover" alt="User">
+
+                @if($user->avatar_path)
+                    <img src="{{ asset('storage/' . $user->avatar_path) }}" data-tab="profile" class="w-9 h-9 rounded-full border border-slate-200 cursor-pointer shadow-sm object-cover" alt="Foto profil" title="Buka Profil Saya">
+                @else
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name ?? 'User') }}&background=0D8ABC&color=fff" data-tab="profile" class="w-9 h-9 rounded-full border border-slate-200 cursor-pointer shadow-sm object-cover" alt="Foto profil" title="Buka Profil Saya">
+                @endif
             </div>
         </header>
 
-        <!-- Bagian Isi Halaman -->
-        <div class="p-8 space-y-6">
+        <div class="p-8">
+            @if(session('success'))
+                <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-            <!-- Banner Sambutan -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 rounded-2xl border border-gray-200 shadow-sm gap-4">
-                <div>
-                    <div class="flex items-center gap-3">
-                        <h2 class="text-2xl font-bold text-gray-900">Selamat Datang, {{ $user->name ?? 'Pak Nur' }}</h2>
-                        <span class="bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-medium">Pembina Futsal</span>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-1">Rabu, 18 Maret 2026 • Kelola kegiatan latihan dan rekap kehadiran hari ini</p>
+            @if($errors->any())
+                <div class="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    <ul class="list-disc pl-5 space-y-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
-                <div class="flex gap-2">
-                    <button class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2">
-                        <i class="fa-solid fa-print text-xs"></i> Cetak Rekap
-                    </button>
-                </div>
-            </div>
+            @endif
 
-            <!-- Grid 4 Kartu Statistik -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Card 1 -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Anggota Aktif</p>
-                            <h3 class="text-2xl font-bold text-gray-900 mt-1">45 Siswa</h3>
+            <div id="tab-dashboard" class="space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-4">
+                            <p class="text-xs font-semibold text-slate-500">Total Anggota</p>
+                            <div class="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                            </div>
                         </div>
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                            <i class="fa-solid fa-users"></i>
-                        </div>
+                        <h2 class="text-3xl font-black text-slate-800">45</h2>
+                        <p class="text-[10px] text-slate-400 mt-1 font-medium">Siswa aktif di ekstrakurikuler</p>
                     </div>
-                    <p class="text-xs text-gray-400 mt-3">Siswa aktif terdaftar</p>
-                </div>
-                <!-- Card 2 -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Rata-rata Kehadiran</p>
-                            <h3 class="text-2xl font-bold text-gray-900 mt-1">92%</h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                            <i class="fa-solid fa-clipboard-check"></i>
-                        </div>
-                    </div>
-                    <p class="text-xs text-emerald-600 font-medium mt-3">+2.4% dari bulan lalu</p>
-                </div>
-                <!-- Card 3 -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Jadwal Bulan Ini</p>
-                            <h3 class="text-2xl font-bold text-gray-900 mt-1">8 Sesi</h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                            <i class="fa-solid fa-calendar-days"></i>
-                        </div>
-                    </div>
-                    <p class="text-xs text-gray-400 mt-3">4 latihan, 4 uji tanding</p>
-                </div>
-                <!-- Card 4 -->
-                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Prestasi</p>
-                            <h3 class="text-2xl font-bold text-gray-900 mt-1">3 Piala</h3>
-                        </div>
-                        <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
-                            <i class="fa-solid fa-award"></i>
-                        </div>
-                    </div>
-                    <p class="text-xs text-gray-400 mt-3">Tahun ajaran genap ini</p>
-                </div>
-            </div>
 
-            <!-- Layout Tengah (Grafik & Aksi Cepat) -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                <!-- Grafik Tren Kehadiran (Lebar 2) -->
-                <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-bold text-gray-900 text-base">Tren Kehadiran Latihan Futsal (%)</h3>
-                        <div class="flex items-center gap-2 text-xs text-gray-500">
-                            <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span> Kehadiran
+                    <div class="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-4">
+                            <p class="text-xs font-semibold text-slate-500">Rata-rata Kehadiran</p>
+                            <div class="w-8 h-8 bg-emerald-50 text-emerald-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            </div>
                         </div>
-                    </div>
-                    <!-- Simulasi Bar Chart -->
-                    <div class="h-48 flex items-end justify-between gap-2 px-4 pt-6 border-b border-gray-100">
-                        <div class="w-full bg-gray-100 rounded-t-lg h-[50%] flex flex-col justify-end items-center pb-2"></div>
-                        <div class="w-full bg-gray-100 rounded-t-lg h-[65%] flex flex-col justify-end items-center pb-2"></div>
-                        <div class="w-full bg-gray-100 rounded-t-lg h-[55%] flex flex-col justify-end items-center pb-2"></div>
-                        <div class="w-full bg-gray-100 rounded-t-lg h-[75%] flex flex-col justify-end items-center pb-2"></div>
-                        <div class="w-full bg-gray-100 rounded-t-lg h-[60%] flex flex-col justify-end items-center pb-2"></div>
-                        <div class="w-full bg-blue-600 rounded-t-lg h-[90%] flex flex-col justify-end items-center pb-2 shadow-md shadow-blue-500/20"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-gray-400 pt-3 px-2">
-                        <span>Sesi 1</span>
-                        <span>Sesi 2</span>
-                        <span>Sesi 3</span>
-                        <span>Sesi 4</span>
-                        <span>Sesi 5</span>
-                        <span>Sesi 6</span>
-                    </div>
-                </div>
-
-                <!-- Kolom Kanan (Aksi Cepat & Jadwal Terdekat) -->
-                <div class="space-y-6">
-                    <!-- Aksi Cepat Pembina -->
-                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                        <h3 class="font-bold text-gray-900 text-base mb-4">Aksi Cepat Pembina</h3>
-                        <div class="space-y-3">
-                            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-xl text-sm font-medium flex items-center gap-3 transition shadow-md shadow-blue-600/20">
-                                <i class="fa-solid fa-plus text-xs"></i> Buat Jadwal Baru
-                            </button>
-                            <button class="w-full bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-4 rounded-xl text-sm font-medium flex items-center gap-3 transition">
-                                <i class="fa-solid fa-clipboard-check text-blue-600 text-xs"></i> Ambil Kehadiran Sesi Ini
-                            </button>
-                            <button class="w-full bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-4 rounded-xl text-sm font-medium flex items-center gap-3 transition">
-                                <i class="fa-solid fa-bullhorn text-blue-600 text-xs"></i> Buat Pengumuman Eskul
-                            </button>
+                        <h2 class="text-3xl font-black text-emerald-600">92%</h2>
+                        <p class="text-[10px] text-emerald-600 mt-1 font-bold">+2.4% dari bulan lalu</p>
+                        <div class="mt-3 h-2 rounded-full bg-slate-100 overflow-hidden">
+                            <div class="h-full rounded-full w-[92%] bg-gradient-to-r from-red-400 via-yellow-400 to-green-500"></div>
                         </div>
                     </div>
 
-                    <!-- Jadwal Latihan Terdekat -->
-                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                        <h3 class="font-bold text-gray-900 text-base mb-4">Jadwal Latihan Terdekat</h3>
-                        <div class="space-y-3">
-                            <div class="flex items-start gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50">
-                                <div class="bg-blue-50 text-blue-600 p-2.5 rounded-xl text-center font-bold text-xs uppercase min-w-[50px]">
-                                    <span class="block text-[10px] text-gray-400">Selasa</span> 17
+                    <div class="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-4">
+                            <p class="text-xs font-semibold text-slate-500">Jadwal Bulan Ini</p>
+                            <div class="w-8 h-8 bg-amber-50 text-amber-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                        </div>
+                        <h2 class="text-3xl font-black text-slate-800">8</h2>
+                        <p class="text-[10px] text-slate-400 mt-1 font-medium">4 latihan dan 4 agenda penting</p>
+                    </div>
+
+                    <div class="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-4">
+                            <p class="text-xs font-semibold text-slate-500">Sertifikat</p>
+                            <div class="w-8 h-8 bg-rose-50 text-rose-500 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                            </div>
+                        </div>
+                        <h2 class="text-3xl font-black text-slate-800">3</h2>
+                        <p class="text-[10px] text-slate-400 mt-1 font-medium">Pengajuan dan penerbitan selesai</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 flex flex-col">
+                            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                                <h3 class="font-bold text-slate-800 text-base">Tren Kehadiran Siswa Bulan Ini</h3>
+                                <div class="flex items-center gap-2 text-xs text-slate-500">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span> Kehadiran
                                 </div>
+                            </div>
+
+                            <div class="grid grid-cols-12 gap-3 items-end h-64">
+                                <div class="flex flex-col items-center justify-end h-full gap-2">
+                                    <span class="text-[10px] text-slate-400">50%</span>
+                                    <div class="w-full bg-slate-100 rounded-t-xl h-[50%]"></div>
+                                </div>
+                                <div class="flex flex-col items-center justify-end h-full gap-2">
+                                    <span class="text-[10px] text-slate-400">65%</span>
+                                    <div class="w-full bg-slate-100 rounded-t-xl h-[65%]"></div>
+                                </div>
+                                <div class="flex flex-col items-center justify-end h-full gap-2">
+                                    <span class="text-[10px] text-slate-400">55%</span>
+                                    <div class="w-full bg-slate-100 rounded-t-xl h-[55%]"></div>
+                                </div>
+                                <div class="flex flex-col items-center justify-end h-full gap-2">
+                                    <span class="text-[10px] text-slate-400">75%</span>
+                                    <div class="w-full bg-slate-100 rounded-t-xl h-[75%]"></div>
+                                </div>
+                                <div class="flex flex-col items-center justify-end h-full gap-2">
+                                    <span class="text-[10px] text-slate-400">60%</span>
+                                    <div class="w-full bg-slate-100 rounded-t-xl h-[60%]"></div>
+                                </div>
+                                <div class="flex flex-col items-center justify-end h-full gap-2">
+                                    <span class="text-[10px] text-slate-400">90%</span>
+                                    <div class="w-full bg-blue-600 rounded-t-xl h-[90%]"></div>
+                                </div>
+                                <div class="flex flex-col items-center justify-end h-full gap-2">
+                                    <span class="text-[10px] text-slate-400">83%</span>
+                                    <div class="w-full bg-slate-100 rounded-t-xl h-[83%]"></div>
+                                </div>
+                                <div class="flex flex-col items-center justify-end h-full gap-2">
+                                    <span class="text-[10px] text-slate-400">96%</span>
+                                    <div class="w-full bg-blue-600 rounded-t-xl h-[96%]"></div>
+                                </div>
+                                <div class="flex flex-col items-center justify-end h-full gap-2">
+                                    <span class="text-[10px] text-slate-400">88%</span>
+                                    <div class="w-full bg-slate-100 rounded-t-xl h-[88%]"></div>
+                                </div>
+                                <div class="flex flex-col items-center justify-end h-full gap-2">
+                                    <span class="text-[10px] text-slate-400">91%</span>
+                                    <div class="w-full bg-slate-100 rounded-t-xl h-[91%]"></div>
+                                </div>
+                                <div class="flex flex-col items-center justify-end h-full gap-2">
+                                    <span class="text-[10px] text-slate-400">94%</span>
+                                    <div class="w-full bg-blue-600 rounded-t-xl h-[94%]"></div>
+                                </div>
+                                <div class="flex flex-col items-center justify-end h-full gap-2">
+                                    <span class="text-[10px] text-slate-400">97%</span>
+                                    <div class="w-full bg-blue-600 rounded-t-xl h-[97%]"></div>
+                                </div>
+                            </div>
+
+                            <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                <div class="flex items-center justify-between text-xs text-slate-500">
+                                    <span>Jan</span>
+                                    <span>Feb</span>
+                                    <span>Mar</span>
+                                    <span>Apr</span>
+                                    <span>Mei</span>
+                                    <span>Jun</span>
+                                    <span>Jul</span>
+                                    <span>Agu</span>
+                                    <span>Sep</span>
+                                    <span>Okt</span>
+                                    <span>Nov</span>
+                                    <span>Des</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+                            <h3 class="font-bold text-slate-800 text-sm mb-5">Aksi Cepat Pembina</h3>
+                            <div class="space-y-3">
+                                <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 px-4 rounded-xl text-sm font-medium flex items-center gap-3 transition shadow-md shadow-blue-600/20">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    Buat Jadwal Baru
+                                </button>
+                                <button class="w-full bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-4 rounded-xl text-sm font-medium flex items-center gap-3 transition">
+                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    Ambil Kehadiran
+                                </button>
+                                <button class="w-full bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 py-2.5 px-4 rounded-xl text-sm font-medium flex items-center gap-3 transition">
+                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>
+                                    Buat Pengumuman
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+                            <h3 class="font-bold text-slate-800 text-sm mb-5">Jadwal Kegiatan Terdekat</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-start gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50">
+                                    <div class="bg-blue-50 text-blue-600 p-2.5 rounded-xl text-center font-bold text-xs uppercase min-w-[50px]">
+                                        <span class="block text-[10px] text-gray-400">Selasa</span> 17
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-slate-800">Latihan Taktik</h4>
+                                        <p class="text-xs text-slate-500 mt-0.5">15:00 - 17:30 • Lapangan Utama</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50">
+                                    <div class="bg-blue-50 text-blue-600 p-2.5 rounded-xl text-center font-bold text-xs uppercase min-w-[50px]">
+                                        <span class="block text-[10px] text-gray-400">Kamis</span> 19
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-slate-800">Uji Tanding</h4>
+                                        <p class="text-xs text-slate-500 mt-0.5">14:30 - 17:00 • Stadion Mini</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-anggota" class="hidden space-y-8">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Daftar Anggota Ekstrakurikuler</h2>
+                            <p class="text-sm text-slate-500 mt-1">Kelola siswa, riwayat kehadiran, dan status aktif.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">45 Siswa</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between gap-4 border border-slate-200 rounded-2xl p-4">
+                            <div class="flex items-center gap-3">
+                                <img src="https://ui-avatars.com/api/?name=Jack+Owhyy&background=0D8ABC&color=fff" class="w-12 h-12 rounded-full object-cover border border-slate-200" alt="Jack">
                                 <div>
-                                    <h4 class="text-sm font-bold text-gray-900">Latihan Taktik Futsal</h4>
-                                    <p class="text-xs text-gray-500 mt-0.5">15:00 - 17:30 • Lapangan Utama</p>
+                                    <h3 class="font-bold text-slate-800">Jack Owhyy</h3>
+                                    <p class="text-xs text-slate-500">XII RPL 1 • Futsal</p>
                                 </div>
                             </div>
-                            <div class="flex items-start gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50">
-                                <div class="bg-blue-50 text-blue-600 p-2.5 rounded-xl text-center font-bold text-xs uppercase min-w-[50px]">
-                                    <span class="block text-[10px] text-gray-400">Kamis</span> 19
-                                </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-semibold text-emerald-600">98% hadir</span>
+                                <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-4 border border-slate-200 rounded-2xl p-4">
+                            <div class="flex items-center gap-3">
+                                <img src="https://ui-avatars.com/api/?name=Kha+Dhael&background=0D8ABC&color=fff" class="w-12 h-12 rounded-full object-cover border border-slate-200" alt="Kha">
                                 <div>
-                                    <h4 class="text-sm font-bold text-gray-900">Uji Tanding vs SMK 2</h4>
-                                    <p class="text-xs text-gray-500 mt-0.5">14:30 - 17:00 • Stadion Mini</p>
+                                    <h3 class="font-bold text-slate-800">Kha Dhael</h3>
+                                    <p class="text-xs text-slate-500">XII TKJ 2 • Futsal</p>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Layout Bawah (Tabel Keaktifan & Penilaian Anggota) -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                <!-- Tabel Keaktifan Anggota (Lebar 2) -->
-                <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-bold text-gray-900 text-base">Keaktifan Anggota Futsal</h3>
-                        <a href="#" class="text-xs font-semibold text-blue-600 hover:text-blue-700">Lihat Semua Anggota</a>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b border-gray-100 text-xs text-gray-400 uppercase tracking-wider">
-                                    <th class="pb-3 font-semibold">Nama Siswa</th>
-                                    <th class="pb-3 font-semibold">Kelas</th>
-                                    <th class="pb-3 font-semibold">Kehadiran</th>
-                                    <th class="pb-3 font-semibold">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-sm divide-y divide-gray-50">
-                                <tr>
-                                    <td class="py-3.5 font-semibold text-gray-800">Jack Owhyy</td>
-                                    <td class="py-3.5 text-gray-500">XII RPL 1</td>
-                                    <td class="py-3.5 font-bold text-emerald-600">98%</td>
-                                    <td class="py-3.5"><span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3.5 font-semibold text-gray-800">Kha Dhael</td>
-                                    <td class="py-3.5 text-gray-500">XII TKJ 2</td>
-                                    <td class="py-3.5 font-bold text-emerald-600">94%</td>
-                                    <td class="py-3.5"><span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3.5 font-semibold text-gray-800">Lancelot Trigonometri</td>
-                                    <td class="py-3.5 text-gray-500">XI RPL 2</td>
-                                    <td class="py-3.5 font-bold text-amber-600">88%</td>
-                                    <td class="py-3.5"><span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3.5 font-semibold text-gray-800">MohonMaafLahirBatin</td>
-                                    <td class="py-3.5 text-gray-500">XI MM 1</td>
-                                    <td class="py-3.5 font-bold text-amber-600">76%</td>
-                                    <td class="py-3.5"><span class="bg-rose-50 text-rose-600 text-xs px-2.5 py-1 rounded-full font-medium">Tidak Aktif</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3.5 font-semibold text-gray-800">Sunan Crazyyyxyz</td>
-                                    <td class="py-3.5 text-gray-500">X RPL 1</td>
-                                    <td class="py-3.5 font-bold text-emerald-600">100%</td>
-                                    <td class="py-3.5"><span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Daftar Tugas / Catatan Pembina (Kolom Kanan) -->
-                <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <h3 class="font-bold text-gray-900 text-base mb-4">Catatan & Evaluasi Pembina</h3>
-                        <div class="space-y-3">
-                            <div class="p-3 bg-blue-50/60 border border-blue-100 rounded-xl">
-                                <h4 class="text-xs font-bold text-blue-900">Persiapan Turnamen Antar SMK</h4>
-                                <p class="text-xs text-blue-700 mt-1">Fokuskan latihan fisik dan stamina untuk lini tengah pada sesi minggu depan.</p>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-semibold text-emerald-600">94% hadir</span>
+                                <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span>
                             </div>
-                            <div class="p-3 bg-amber-50/60 border border-amber-100 rounded-xl">
-                                <h4 class="text-xs font-bold text-amber-900">Pengumpulan Nilai Rapor</h4>
-                                <p class="text-xs text-amber-700 mt-1">Batas akhir input nilai ekstrakurikuler ke sistem admin adalah tanggal 25.</p>
+                        </div>
+
+                        <div class="flex items-center justify-between gap-4 border border-slate-200 rounded-2xl p-4">
+                            <div class="flex items-center gap-3">
+                                <img src="https://ui-avatars.com/api/?name=Lancelot+T&background=0D8ABC&color=fff" class="w-12 h-12 rounded-full object-cover border border-slate-200" alt="Lancelot">
+                                <div>
+                                    <h3 class="font-bold text-slate-800">Lancelot Trigonometri</h3>
+                                    <p class="text-xs text-slate-500">XI RPL 2 • Futsal</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-semibold text-amber-600">88% hadir</span>
+                                <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-6">
-                        <button class="w-full bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 py-2.5 rounded-xl text-xs font-semibold transition">
-                            <i class="fa-solid fa-pen-to-square mr-1 text-blue-600"></i> Tulis Catatan Baru
-                        </button>
-                    </div>
                 </div>
-
             </div>
 
+            <div id="tab-jadwal" class="hidden space-y-8">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Jadwal Latihan</h2>
+                            <p class="text-sm text-slate-500 mt-1">Pengaturan sesi latihan dan jadwal penting untuk siswa.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">8 Sesi</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">Selasa</p>
+                            <h3 class="mt-2 text-lg font-bold text-slate-800">Latihan Taktik</h3>
+                            <p class="mt-2 text-sm text-slate-600">15:00 - 17:30</p>
+                            <p class="text-sm text-slate-500">Lapangan Utama</p>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">Kamis</p>
+                            <h3 class="mt-2 text-lg font-bold text-slate-800">Uji Tanding</h3>
+                            <p class="mt-2 text-sm text-slate-600">14:30 - 17:00</p>
+                            <p class="text-sm text-slate-500">Stadion Mini</p>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-blue-600">Sabtu</p>
+                            <h3 class="mt-2 text-lg font-bold text-slate-800">Kondisi Fisik</h3>
+                            <p class="mt-2 text-sm text-slate-600">08:00 - 10:00</p>
+                            <p class="text-sm text-slate-500">Gymnasium Sekolah</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-kehadiran" class="hidden space-y-8">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Rekap Kehadiran</h2>
+                            <p class="text-sm text-slate-500 mt-1">Semua pencatatan kehadiran anggota ekstrakurikuler.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">120 Catatan</span>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between gap-4">
+                            <div>
+                                <h3 class="font-bold text-slate-800">Jack Owhyy</h3>
+                                <p class="text-sm text-slate-500">Selasa, 17 September 2026 • Hadir</p>
+                            </div>
+                            <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-bold">Hadir</span>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between gap-4">
+                            <div>
+                                <h3 class="font-bold text-slate-800">Kha Dhael</h3>
+                                <p class="text-sm text-slate-500">Kamis, 19 September 2026 • Izin</p>
+                            </div>
+                            <span class="bg-amber-50 text-amber-600 text-xs px-2.5 py-1 rounded-full font-bold">Izin</span>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between gap-4">
+                            <div>
+                                <h3 class="font-bold text-slate-800">Lancelot Trigonometri</h3>
+                                <p class="text-sm text-slate-500">Sabtu, 21 September 2026 • Alpha</p>
+                            </div>
+                            <span class="bg-rose-50 text-rose-600 text-xs px-2.5 py-1 rounded-full font-bold">Alpha</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-profile" class="hidden">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6 mb-8">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Profil Pembina</h2>
+                            <p class="text-sm text-slate-500 mt-1">Kelola nama, foto, nomor HP, dan bio singkat.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Profil</span>
+                    </div>
+
+                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6 items-start">
+                        @csrf
+                        <div class="flex flex-col items-center text-center gap-4">
+                            <div class="w-36 h-36 rounded-full overflow-hidden border-4 border-slate-100 shadow-sm bg-slate-100">
+                                @if($user->avatar_path)
+                                    <img src="{{ asset('storage/' . $user->avatar_path) }}" alt="Foto profil" class="w-full h-full object-cover">
+                                @else
+                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name ?? 'User') }}&background=0D8ABC&color=fff&size=256" alt="Foto profil" class="w-full h-full object-cover">
+                                @endif
+                            </div>
+                            <div>
+                                <label class="inline-flex cursor-pointer items-center justify-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 transition-colors">
+                                    Pilih Foto
+                                    <input type="file" name="avatar" accept="image/*" class="hidden">
+                                </label>
+                                <p class="mt-2 text-xs text-slate-500">JPG, PNG, WEBP. Maks 2MB.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Lengkap</label>
+                                <input type="text" name="name" value="{{ old('name', $user->name) }}" class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Jabatan</label>
+                                <input type="text" name="class_name" value="{{ old('class_name', $user->class_name) }}" placeholder="Pembina Futsal" class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Email</label>
+                                <input type="email" value="{{ $user->email }}" class="w-full rounded-2xl border-slate-200 bg-slate-50 px-4 py-3 text-sm" disabled>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">No. HP</label>
+                                <input type="text" name="phone" value="{{ old('phone', $user->phone) }}" placeholder="08xxxxxxxxxx" class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Bio Singkat</label>
+                                <textarea name="bio" rows="4" maxlength="500" placeholder="Ceritakan fokus pembinaan dan pengalaman..." class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm">{{ old('bio', $user->bio) }}</textarea>
+                            </div>
+                            <div class="md:col-span-2 flex items-center gap-3">
+                                <button type="submit" class="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition-colors">Simpan Profil</button>
+                                <p class="text-xs text-slate-500">Perubahan akan langsung tersimpan di database pengguna.</p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="tab-settings" class="hidden space-y-8">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Pengaturan</h2>
+                            <p class="text-sm text-slate-500 mt-1">Atur preferensi dasar dashboard pembina.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Settings</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Tema</p>
+                            <h3 class="mt-2 text-lg font-bold text-slate-800">Mode Gelap</h3>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Notifikasi</p>
+                            <h3 class="mt-2 text-lg font-bold text-slate-800">Aktif</h3>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Bahasa</p>
+                            <h3 class="mt-2 text-lg font-bold text-slate-800">Indonesia</h3>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-500">
+                        Untuk sementara, menu pengaturan ini menampilkan ringkasan dasar saja. Nanti bisa ditambah opsi notifikasi, bahasa, dan preferensi tampilan.
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = {
+                dashboard: document.getElementById('tab-dashboard'),
+                anggota: document.getElementById('tab-anggota'),
+                jadwal: document.getElementById('tab-jadwal'),
+                kehadiran: document.getElementById('tab-kehadiran'),
+                profile: document.getElementById('tab-profile'),
+                settings: document.getElementById('tab-settings'),
+            };
+
+            const navItems = Array.from(document.querySelectorAll('[data-tab]'));
+
+            function activateTab(name) {
+                Object.entries(tabs).forEach(function ([tabName, element]) {
+                    if (!element) return;
+                    element.classList.toggle('hidden', tabName !== name);
+                });
+
+                navItems.forEach(function (item) {
+                    const isActive = item.dataset.tab === name;
+                    item.classList.toggle('bg-[#2E3C51]', isActive);
+                    item.classList.toggle('text-white', isActive);
+                    item.classList.toggle('shadow-sm', isActive);
+                    item.classList.toggle('border', isActive);
+                    item.classList.toggle('border-[#3A4A62]', isActive);
+                    item.classList.toggle('text-slate-400', !isActive);
+                });
+            }
+
+            navItems.forEach(function (item) {
+                item.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    activateTab(item.dataset.tab || 'dashboard');
+                });
+            });
+
+            document.querySelectorAll('[data-tab="profile"]').forEach(function (element) {
+                element.addEventListener('click', function () {
+                    activateTab('profile');
+                });
+            });
+
+            const initialTab = window.location.hash.replace('#', '') || 'dashboard';
+            activateTab(tabs[initialTab] ? initialTab : 'dashboard');
+        });
+    </script>
 
 </body>
 </html>

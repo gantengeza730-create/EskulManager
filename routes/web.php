@@ -39,6 +39,19 @@ Route::middleware('auth')->group(function () {
     });
 
     // --- BISA DIAKSES SEMUA ROLE (Asal sudah login) ---
+    Route::get('/profile/update', function () {
+        $user = Auth::user();
+
+        if ($user && $user->role === 'guru') {
+            return redirect('/guru/dashboard#tab-profile');
+        }
+
+        if ($user && $user->role === 'siswa') {
+            return redirect('/dashboard#tab-profile');
+        }
+
+        return redirect('/')->with('success', 'Silakan gunakan formulir profil untuk menyimpan perubahan.');
+    });
     Route::post('/logout', [MainController::class, 'logout'])->name('logout');
     Route::post('/profile/update', [MainController::class, 'updateProfile'])->name('profile.update');
 });
