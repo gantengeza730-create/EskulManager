@@ -34,7 +34,14 @@
             </div>
             <div class="flex items-center gap-3">
                 @auth
-                    <a href="/dashboard" class="px-5 py-2 bg-blue-600 text-white text-sm font-bold rounded-full shadow-md hover:bg-blue-700 transition">Ke Dashboard -></a>
+                    @php
+                        $dashboardRoute = auth()->user()->role === 'siswa'
+                            ? route('dashboard.siswa')
+                            : (auth()->user()->role === 'guru'
+                                ? route('dashboard.guru')
+                                : route('dashboard.admin'));
+                    @endphp
+                    <a href="{{ $dashboardRoute }}" class="px-5 py-2 bg-blue-600 text-white text-sm font-bold rounded-full shadow-md hover:bg-blue-700 transition">Ke Dashboard -></a>
                 @else
                     <a href="{{ route('login') }}" class="px-5 py-2 text-slate-700 text-sm font-bold rounded-full hover:bg-slate-100 transition">Masuk</a>
                     <a href="{{ url('/register') }}" class="px-5 py-2 bg-blue-600 text-white text-sm font-bold rounded-full shadow-md hover:bg-blue-700 transition">Daftar Sekarang</a>
@@ -71,7 +78,13 @@
         
         <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
             @foreach($ekskuls as $item)
-            <div class="group relative h-80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-end p-5 text-white bg-cover bg-center" style="background-image: url('{{ $item->image }}');">
+                @php
+                    $cardImage = $item->image;
+                    if ($cardImage && !\Illuminate\Support\Str::startsWith($cardImage, ['http://', 'https://', '/'])) {
+                        $cardImage = \Illuminate\Support\Facades\Storage::url($cardImage);
+                    }
+                @endphp
+            <div class="group relative h-80 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-end p-5 text-white bg-cover bg-center" style="background-image: url('{{ $cardImage }}');">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
                 <div class="relative z-10 flex flex-col h-full justify-between">
                     <div class="flex justify-between items-start">
@@ -82,10 +95,18 @@
                         <h3 class="text-xl font-bold">{{ $item->title }}</h3>
                         <p class="text-xs text-slate-300 mb-2">{{ $item->coach }}</p>
                         <p class="text-[11px] text-slate-300 mt-2 line-clamp-3">{{ $item->description }}</p>
-                        <form action="/join/{{ $item->id }}" method="POST" class="mt-4">
-                            @csrf
-                            <button type="submit" class="w-max px-5 py-1.5 border border-white/50 hover:bg-white hover:text-slate-900 rounded-lg text-xs font-bold transition">Gabung</button>
-                        </form>
+                        @auth
+                            @if(auth()->user()->role === 'siswa')
+                                <form action="{{ route('ekskul.join', $item->id) }}" method="POST" class="mt-4">
+                                    @csrf
+                                    <button type="submit" class="w-max px-5 py-1.5 border border-white/50 hover:bg-white hover:text-slate-900 rounded-lg text-xs font-bold transition">Gabung</button>
+                                </form>
+                            @else
+                                <div class="mt-4 text-[10px] font-bold uppercase tracking-wider text-slate-200">Login siswa untuk gabung</div>
+                            @endif
+                        @else
+                            <a href="{{ route('login') }}" class="mt-4 inline-block w-max px-5 py-1.5 border border-white/50 hover:bg-white hover:text-slate-900 rounded-lg text-xs font-bold transition">Login untuk gabung</a>
+                        @endauth
                     </div>
                 </div>
             </div>

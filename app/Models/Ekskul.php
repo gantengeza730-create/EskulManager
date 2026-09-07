@@ -9,8 +9,21 @@ class Ekskul extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'category',
+        'coach',
+        'description',
+        'image',
+    ];
+
     public function registrations()
     {
         return $this->hasMany(Registration::class);
+    }
+
+    public function evaluations()
+    {
+        return $this->hasMany(EkskulEvaluation::class);
     }
 }

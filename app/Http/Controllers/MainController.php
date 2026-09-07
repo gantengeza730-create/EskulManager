@@ -101,14 +101,15 @@ class MainController extends Controller
     public function dashboard()
 {
     $user = Auth::user();
-    
-    // Ambil data pendaftaran ekskul berdasarkan user yang sedang login
+
     $registrations = Registration::with(['ekskul', 'user'])
         ->where('user_id', $user->id)
+        ->whereIn('status', ['diterima', 'aktif'])
         ->latest()
         ->get();
     $ekskulMembers = Registration::with('user')
         ->whereIn('ekskul_id', $registrations->pluck('ekskul_id'))
+        ->whereIn('status', ['diterima', 'aktif'])
         ->latest()
         ->get();
     $ekskuls = Ekskul::orderBy('title')->get();
@@ -161,8 +162,19 @@ class MainController extends Controller
         ? 100 * round($presentCount / $totalDaysFromFirstJoin)
         : 0;
 
+    $studentEvaluations = \App\Models\EkskulEvaluation::with(['ekskul'])
+        ->where('user_id', $user->id)
+        ->orderByDesc('evaluation_date')
+        ->latest()
+        ->get();
+
+    foreach ($studentEvaluations as $evaluation) {
+        $evaluation->letter_grade = $this->letterGradeForScore((int) $evaluation->score);
+        $evaluation->grade_color = $this->gradeColorForScore((int) $evaluation->score);
+    }
+
     // Kirim kedua variabel ke view dashboard
-    return view('dashboard', compact('user', 'registrations', 'ekskulMembers', 'ekskuls', 'attendanceRecords', 'presentCount', 'totalDaysFromFirstJoin', 'attendancePercentage', 'monthlyAttendanceByDate', 'attendanceStatsByEkskul', 'currentMonthStart', 'currentMonthEnd')); 
+    return view('dashboard', compact('user', 'registrations', 'ekskulMembers', 'ekskuls', 'attendanceRecords', 'presentCount', 'totalDaysFromFirstJoin', 'attendancePercentage', 'monthlyAttendanceByDate', 'attendanceStatsByEkskul', 'currentMonthStart', 'currentMonthEnd', 'studentEvaluations')); 
 }
 
     public function markAttendance(Request $request, $registrationId)
@@ -239,6 +251,10 @@ class MainController extends Controller
 
     public function joinEkskul(Request $request, $id)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu untuk mendaftar ekskul.');
+        }
+
         $user = Auth::user();
 
         if ($user->role !== 'siswa') {
@@ -249,12 +265,22 @@ class MainController extends Controller
 
         $ekskul = Ekskul::findOrFail($id);
 
-        $exists = Registration::where('user_id', $user->id)
+        $existing = Registration::where('user_id', $user->id)
             ->where('ekskul_id', $ekskul->id)
-            ->exists();
+            ->first();
 
-        if ($exists) {
-            return back()->with('success', 'Kamu sudah terdaftar di ekskul ini.');
+        if ($existing) {
+            if ($existing->status === 'pending') {
+                return back()->with('success', 'Pendaftaran kamu masih menunggu persetujuan pembina.');
+            }
+
+            if (in_array($existing->status, ['diterima', 'aktif'])) {
+                return back()->with('success', 'Kamu sudah terdaftar di ekskul ini.');
+            }
+
+            $existing->update(['status' => 'pending']);
+
+            return back()->with('success', 'Pendaftaran ekskul dikirim ulang dan menunggu persetujuan.');
         }
 
         Registration::create([
@@ -268,6 +294,10 @@ class MainController extends Controller
 
     public function cancelEkskul(Request $request, $id)
     {
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu untuk membatalkan pendaftaran.');
+        }
+
         $user = Auth::user();
 
         if ($user->role !== 'siswa') {
@@ -318,7 +348,232 @@ class MainController extends Controller
     public function dashboardGuru()
     {
         $user = Auth::user();
-        return view('dashboard_guru', compact('user'));
+
+        $ekskuls = Ekskul::where('coach', $user->name)
+            ->with(['registrations.user', 'registrations.attendanceRecords'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        $acceptedRegistrations = Registration::with(['user', 'ekskul'])
+            ->whereIn('ekskul_id', $ekskuls->pluck('id'))
+            ->whereIn('status', ['diterima', 'aktif'])
+            ->latest()
+            ->get();
+
+        $pendingRegistrations = Registration::with(['user', 'ekskul'])
+            ->whereIn('ekskul_id', $ekskuls->pluck('id'))
+            ->where('status', 'pending')
+            ->latest()
+            ->get();
+
+        $allAttendance = AttendanceRecord::whereIn('registration_id', $acceptedRegistrations->pluck('id'))->get();
+        $presentCount = $allAttendance->where('status', 'hadir')->count();
+        $averageAttendance = $allAttendance->count() > 0
+            ? round(($presentCount / $allAttendance->count()) * 100, 1)
+            : 0;
+
+        $evaluations = \App\Models\EkskulEvaluation::with(['user', 'ekskul'])
+            ->whereIn('ekskul_id', $ekskuls->pluck('id'))
+            ->orderByDesc('evaluation_date')
+            ->latest()
+            ->get();
+
+        foreach ($evaluations as $evaluation) {
+            $evaluation->letter_grade = $this->letterGradeForScore((int) $evaluation->score);
+            $evaluation->grade_color = $this->gradeColorForScore((int) $evaluation->score);
+        }
+
+        return view('dashboard_guru', compact('user', 'ekskuls', 'acceptedRegistrations', 'pendingRegistrations', 'averageAttendance', 'evaluations'));
+    }
+
+    public function acceptRegistration(Registration $registration)
+    {
+        $user = Auth::user();
+        $ekskul = $registration->ekskul;
+
+        if ($user->role !== 'guru' || !$ekskul || $ekskul->coach !== $user->name) {
+            return back()->withErrors(['ekskul' => 'Kamu tidak memiliki izin untuk menerima pendaftaran ini.']);
+        }
+
+        $registration->update(['status' => 'diterima']);
+
+        return back()->with('success', 'Pendaftaran siswa berhasil diterima.');
+    }
+
+    public function rejectRegistration(Registration $registration)
+    {
+        $user = Auth::user();
+        $ekskul = $registration->ekskul;
+
+        if ($user->role !== 'guru' || !$ekskul || $ekskul->coach !== $user->name) {
+            return back()->withErrors(['ekskul' => 'Kamu tidak memiliki izin untuk menolak pendaftaran ini.']);
+        }
+
+        $registration->update(['status' => 'ditolak']);
+
+        return back()->with('success', 'Pendaftaran siswa berhasil ditolak.');
+    }
+
+    public function storeEvaluation(Request $request, Registration $registration)
+    {
+        $user = Auth::user();
+        $ekskul = $registration->ekskul;
+
+        if ($user->role !== 'guru' || !$ekskul || $ekskul->coach !== $user->name) {
+            return back()->withErrors(['ekskul' => 'Kamu tidak memiliki izin untuk menilai siswa ini.']);
+        }
+
+        $validated = $request->validate([
+            'score' => 'required|integer|min:0|max:100',
+            'notes' => 'nullable|string|max:500',
+            'evaluation_date' => 'required|date',
+        ]);
+
+        \App\Models\EkskulEvaluation::updateOrCreate(
+            [
+                'registration_id' => $registration->id,
+                'user_id' => $registration->user_id,
+                'ekskul_id' => $registration->ekskul_id,
+                'evaluation_date' => $validated['evaluation_date'],
+            ],
+            [
+                'score' => $validated['score'],
+                'notes' => $validated['notes'] ?? null,
+            ]
+        );
+
+        return back()->with('success', 'Penilaian ekstrakurikuler berhasil disimpan.');
+    }
+
+    protected function letterGradeForScore(int $score): string
+    {
+        if ($score >= 90) {
+            return 'A';
+        }
+
+        if ($score >= 80) {
+            return 'B';
+        }
+
+        if ($score >= 70) {
+            return 'C';
+        }
+
+        if ($score >= 60) {
+            return 'D';
+        }
+
+        return 'F';
+    }
+
+    protected function gradeColorForScore(int $score): string
+    {
+        if ($score >= 90) {
+            return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+        }
+
+        if ($score >= 80) {
+            return 'bg-blue-50 text-blue-700 border border-blue-200';
+        }
+
+        if ($score >= 70) {
+            return 'bg-amber-50 text-amber-700 border border-amber-200';
+        }
+
+        if ($score >= 60) {
+            return 'bg-orange-50 text-orange-700 border border-orange-200';
+        }
+
+        return 'bg-rose-50 text-rose-700 border border-rose-200';
+    }
+
+    public function storeEkskul(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'guru') {
+            return back()->withErrors([
+                'ekskul' => 'Hanya guru yang dapat menambahkan ekskul.',
+            ]);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string|max:100',
+            'description' => 'nullable|string|max:1000',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('ekskul-images', 'public');
+        }
+
+        Ekskul::create([
+            'title' => $validated['title'],
+            'category' => $validated['category'],
+            'coach' => $user->name,
+            'description' => $validated['description'] ?? 'Ekskul yang dikelola oleh guru.',
+            'image' => $imagePath ?? 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=80',
+        ]);
+
+        return back()->with('success', 'Ekskul berhasil ditambahkan.');
+    }
+
+    public function updateEkskul(Request $request, $id)
+    {
+        $user = Auth::user();
+        $ekskul = Ekskul::findOrFail($id);
+
+        if ($user->role !== 'guru' || $ekskul->coach !== $user->name) {
+            return back()->withErrors([
+                'ekskul' => 'Kamu tidak memiliki izin untuk mengubah ekskul ini.',
+            ]);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'category' => 'required|string|max:100',
+            'description' => 'nullable|string|max:1000',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            if (!empty($ekskul->image) && !str_starts_with((string) $ekskul->image, ['http://', 'https://'])) {
+                Storage::disk('public')->delete($ekskul->image);
+            }
+
+            $validated['image'] = $request->file('image')->store('ekskul-images', 'public');
+        }
+
+        $ekskul->update([
+            'title' => $validated['title'],
+            'category' => $validated['category'],
+            'description' => $validated['description'] ?? $ekskul->description,
+            'image' => $validated['image'] ?? $ekskul->image,
+        ]);
+
+        return back()->with('success', 'Ekskul berhasil diubah.');
+    }
+
+    public function deleteEkskul($id)
+    {
+        $user = Auth::user();
+        $ekskul = Ekskul::findOrFail($id);
+
+        if ($user->role !== 'guru' || $ekskul->coach !== $user->name) {
+            return back()->withErrors([
+                'ekskul' => 'Kamu tidak memiliki izin untuk menghapus ekskul ini.',
+            ]);
+        }
+
+        if (!empty($ekskul->image) && !str_starts_with((string) $ekskul->image, ['http://', 'https://'])) {
+            Storage::disk('public')->delete($ekskul->image);
+        }
+
+        $ekskul->delete();
+
+        return back()->with('success', 'Ekskul berhasil dihapus.');
     }
 
     // Menampilkan Dashboard Admin

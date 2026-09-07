@@ -6,8 +6,6 @@ use App\Http\Controllers\AuthController;
 
 // Landing Page & Pendaftaran
 Route::get('/', [MainController::class, 'landing'])->name('landing');
-Route::post('/join/{id}', [MainController::class, 'joinEkskul'])->name('ekskul.join');
-Route::post('/cancel/{id}', [MainController::class, 'cancelEkskul'])->name('ekskul.cancel');
 Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 
 // Auth Guest Routes
@@ -22,6 +20,9 @@ Route::middleware('guest')->group(function () {
 // Auth Protected Routes
 Route::middleware('auth')->group(function () {
     
+    Route::post('/join/{id}', [MainController::class, 'joinEkskul'])->name('ekskul.join');
+    Route::post('/cancel/{id}', [MainController::class, 'cancelEkskul'])->name('ekskul.cancel');
+
     // Siswa
     Route::middleware('role:siswa')->group(function () {
         Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard.siswa');
@@ -31,6 +32,12 @@ Route::middleware('auth')->group(function () {
     // Guru
     Route::middleware('role:guru')->group(function () {
         Route::get('/guru/dashboard', [MainController::class, 'dashboardGuru'])->name('dashboard.guru');
+        Route::post('/guru/ekskul/store', [MainController::class, 'storeEkskul'])->name('ekskul.store');
+        Route::put('/guru/ekskul/{id}', [MainController::class, 'updateEkskul'])->name('ekskul.update');
+        Route::delete('/guru/ekskul/{id}', [MainController::class, 'deleteEkskul'])->name('ekskul.delete');
+        Route::post('/guru/registration/{registration}/accept', [MainController::class, 'acceptRegistration'])->name('registration.accept');
+        Route::post('/guru/registration/{registration}/reject', [MainController::class, 'rejectRegistration'])->name('registration.reject');
+        Route::post('/guru/evaluation/{registration}', [MainController::class, 'storeEvaluation'])->name('evaluation.store');
     });
 
     // Admin

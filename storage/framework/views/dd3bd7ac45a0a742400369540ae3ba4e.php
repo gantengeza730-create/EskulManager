@@ -36,7 +36,20 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
                         Anggota
                     </div>
-                    <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">45</span>
+                    <?php $anggotaCount = ($acceptedRegistrations->count() + $pendingRegistrations->count()); ?>
+                    <?php if($anggotaCount > 0): ?>
+                        <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"><?php echo e($anggotaCount); ?></span>
+                    <?php endif; ?>
+                </a>
+
+                <a href="#" data-tab="ekskul" class="flex items-center justify-between text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
+                        Ekskul Saya
+                    </div>
+                    <?php if($ekskuls->count() > 0): ?>
+                        <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"><?php echo e($ekskuls->count()); ?></span>
+                    <?php endif; ?>
                 </a>
 
                 <a href="#" data-tab="jadwal" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
@@ -49,7 +62,7 @@
                     Kehadiran
                 </a>
 
-                <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                <a href="#" data-tab="nilai" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Nilai & Rapor
                 </a>
@@ -123,7 +136,12 @@
 
                 <button class="relative p-2 text-slate-400 hover:text-slate-600 rounded-full border border-slate-200 bg-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                    <?php if(($pendingRegistrations->count() + $acceptedRegistrations->count()) > 0): ?>
+                        <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-bold bg-red-500 text-white rounded-full border-2 border-white">
+                            <?php echo e($pendingRegistrations->count() + $acceptedRegistrations->count()); ?>
+
+                        </span>
+                    <?php endif; ?>
                 </button>
 
                 <?php if($user->avatar_path): ?>
@@ -161,8 +179,8 @@
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                             </div>
                         </div>
-                        <h2 class="text-3xl font-black text-slate-800">45</h2>
-                        <p class="text-[10px] text-slate-400 mt-1 font-medium">Siswa aktif di ekstrakurikuler</p>
+                        <h2 class="text-3xl font-black text-slate-800"><?php echo e($acceptedRegistrations->count()); ?></h2>
+                        <p class="text-[10px] text-slate-400 mt-1 font-medium">Siswa aktif yang sudah diterima</p>
                     </div>
 
                     <div class="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
@@ -172,10 +190,10 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                             </div>
                         </div>
-                        <h2 class="text-3xl font-black text-emerald-600">92%</h2>
-                        <p class="text-[10px] text-emerald-600 mt-1 font-bold">+2.4% dari bulan lalu</p>
+                        <h2 class="text-3xl font-black text-emerald-600"><?php echo e(number_format($averageAttendance, 1)); ?>%</h2>
+                        <p class="text-[10px] text-emerald-600 mt-1 font-bold">Berdasarkan catatan masuk yang valid</p>
                         <div class="mt-3 h-2 rounded-full bg-slate-100 overflow-hidden">
-                            <div class="h-full rounded-full w-[92%] bg-gradient-to-r from-red-400 via-yellow-400 to-green-500"></div>
+                            <div class="h-full rounded-full" style="width: <?php echo e(min(100, max(0, $averageAttendance))); ?>%; background: linear-gradient(90deg, #f87171 0%, #facc15 55%, #22c55e 100%);"></div>
                         </div>
                     </div>
 
@@ -332,56 +350,215 @@
                 <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
                     <div class="flex items-center justify-between gap-4 mb-6">
                         <div>
-                            <h2 class="text-xl font-bold text-slate-900">Daftar Anggota Ekstrakurikuler</h2>
-                            <p class="text-sm text-slate-500 mt-1">Kelola siswa, riwayat kehadiran, dan status aktif.</p>
+                            <h2 class="text-xl font-bold text-slate-900">Data Pendaftar & Anggota Ekstrakurikuler</h2>
+                            <p class="text-sm text-slate-500 mt-1">Kelola siswa yang menunggu persetujuan serta data anggota yang sudah diterima.</p>
                         </div>
-                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">45 Siswa</span>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full"><?php echo e($acceptedRegistrations->count()); ?> Anggota</span>
                     </div>
 
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between gap-4 border border-slate-200 rounded-2xl p-4">
-                            <div class="flex items-center gap-3">
-                                <img src="https://ui-avatars.com/api/?name=Jack+Owhyy&background=0D8ABC&color=fff" class="w-12 h-12 rounded-full object-cover border border-slate-200" alt="Jack">
-                                <div>
-                                    <h3 class="font-bold text-slate-800">Jack Owhyy</h3>
-                                    <p class="text-xs text-slate-500">XII RPL 1 • Futsal</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm font-semibold text-emerald-600">98% hadir</span>
-                                <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span>
+                    <?php if($pendingRegistrations->count()): ?>
+                        <div class="mb-8">
+                            <h3 class="text-sm font-bold text-slate-800 mb-3">Pendaftar Menunggu Persetujuan</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-left border border-slate-200 rounded-2xl overflow-hidden">
+                                    <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-600">
+                                        <tr>
+                                            <th class="px-4 py-3">Nama</th>
+                                            <th class="px-4 py-3">Ekskul</th>
+                                            <th class="px-4 py-3">Kelas</th>
+                                            <th class="px-4 py-3">Status</th>
+                                            <th class="px-4 py-3 text-right">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-200 bg-white text-sm text-slate-700">
+                                        <?php $__currentLoopData = $pendingRegistrations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pending): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <tr>
+                                                <td class="px-4 py-3 font-medium"><?php echo e($pending->user->name ?? '-'); ?></td>
+                                                <td class="px-4 py-3"><?php echo e($pending->ekskul->title ?? '-'); ?></td>
+                                                <td class="px-4 py-3"><?php echo e($pending->user->class_name ?? '-'); ?></td>
+                                                <td class="px-4 py-3">
+                                                    <span class="bg-amber-50 text-amber-600 text-xs px-2.5 py-1 rounded-full font-medium">Pending</span>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <div class="flex justify-end gap-2">
+                                                        <form action="<?php echo e(route('registration.accept', $pending->id)); ?>" method="POST">
+                                                            <?php echo csrf_field(); ?>
+                                                            <button type="submit" class="rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700">Terima</button>
+                                                        </form>
+                                                        <form action="<?php echo e(route('registration.reject', $pending->id)); ?>" method="POST">
+                                                            <?php echo csrf_field(); ?>
+                                                            <button type="submit" class="rounded-full bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-700">Tolak</button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
+                    <?php else: ?>
+                        <div class="mb-8 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-500">
+                            Tidak ada pendaftar yang menunggu persetujuan.
+                        </div>
+                    <?php endif; ?>
 
-                        <div class="flex items-center justify-between gap-4 border border-slate-200 rounded-2xl p-4">
-                            <div class="flex items-center gap-3">
-                                <img src="https://ui-avatars.com/api/?name=Kha+Dhael&background=0D8ABC&color=fff" class="w-12 h-12 rounded-full object-cover border border-slate-200" alt="Kha">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 mb-3">Anggota Aktif</h3>
+                        <?php if($acceptedRegistrations->count()): ?>
+                            <div class="space-y-3">
+                                <?php $__currentLoopData = $acceptedRegistrations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $registration): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <div class="flex items-center justify-between gap-4 border border-slate-200 rounded-2xl p-4">
+                                        <div class="flex items-center gap-3">
+                                            <img src="<?php echo e($registration->user && $registration->user->avatar_path ? asset('storage/' . $registration->user->avatar_path) : 'https://ui-avatars.com/api/?name=' . urlencode($registration->user->name ?? 'User') . '&background=0D8ABC&color=fff'); ?>" class="w-12 h-12 rounded-full object-cover border border-slate-200" alt="<?php echo e($registration->user->name ?? 'User'); ?>">
+                                            <div>
+                                                <h3 class="font-bold text-slate-800"><?php echo e($registration->user->name ?? '-'); ?></h3>
+                                                <p class="text-xs text-slate-500"><?php echo e($registration->user->class_name ?? '-'); ?> • <?php echo e($registration->ekskul->title ?? '-'); ?></p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <?php
+                                                $memberAttendance = $registration->attendanceRecords->where('status', 'hadir')->count();
+                                                $memberTotalAttendance = $registration->attendanceRecords->count();
+                                                $memberAttendancePercent = $memberTotalAttendance > 0 ? round(($memberAttendance / $memberTotalAttendance) * 100, 1) : 0;
+                                            ?>
+                                            <span class="text-sm font-semibold <?php echo e($memberAttendancePercent >= 80 ? 'text-emerald-600' : 'text-amber-600'); ?>"><?php echo e($memberAttendancePercent); ?>% hadir</span>
+                                            <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span>
+                                        </div>
+                                    </div>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </div>
+                        <?php else: ?>
+                            <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                                Belum ada anggota yang diterima.
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-ekskul" class="hidden space-y-8">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Ekskul Saya</h2>
+                            <p class="text-sm text-slate-500 mt-1">Tambah eskul baru, kelola siswa yang terdaftar, dan lihat detail kegiatan.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">3 Eskul</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-[1.2fr_1.8fr] gap-6">
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 min-w-0">
+                            <h3 class="text-base font-bold text-slate-800 mb-4">Tambah Eskul Baru</h3>
+                            <form action="<?php echo e(route('ekskul.store')); ?>" method="POST" enctype="multipart/form-data" class="space-y-4">
+                                <?php echo csrf_field(); ?>
                                 <div>
-                                    <h3 class="font-bold text-slate-800">Kha Dhael</h3>
-                                    <p class="text-xs text-slate-500">XII TKJ 2 • Futsal</p>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Eskul</label>
+                                    <input type="text" name="title" placeholder="Contoh: Futsal" required class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm">
                                 </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm font-semibold text-emerald-600">94% hadir</span>
-                                <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span>
-                            </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Kategori</label>
+                                    <input type="text" name="category" placeholder="Contoh: Olahraga" required class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Deskripsi</label>
+                                    <textarea name="description" rows="5" placeholder="Tuliskan deskripsi singkat kegiatan eskul..." class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm resize-y"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Gambar Eskul</label>
+                                    <input type="file" name="image" accept="image/*" class="block w-full text-sm text-slate-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                </div>
+                                <button type="submit" class="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition-colors">
+                                    Simpan Eskul
+                                </button>
+                            </form>
                         </div>
 
-                        <div class="flex items-center justify-between gap-4 border border-slate-200 rounded-2xl p-4">
-                            <div class="flex items-center gap-3">
-                                <img src="https://ui-avatars.com/api/?name=Lancelot+T&background=0D8ABC&color=fff" class="w-12 h-12 rounded-full object-cover border border-slate-200" alt="Lancelot">
-                                <div>
-                                    <h3 class="font-bold text-slate-800">Lancelot Trigonometri</h3>
-                                    <p class="text-xs text-slate-500">XI RPL 2 • Futsal</p>
+                        <div class="space-y-4 min-w-0">
+                            <?php if(isset($ekskuls) && $ekskuls->count()): ?>
+                                <?php $__currentLoopData = $ekskuls; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ekskul): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm min-w-0">
+                                        <div class="flex items-start gap-4 mb-3">
+                                            <?php if($ekskul->image): ?>
+                                                <?php
+                                                    $ekskulImageUrl = \Illuminate\Support\Str::startsWith((string) $ekskul->image, ['http://', 'https://', '/'])
+                                                        ? $ekskul->image
+                                                        : \Illuminate\Support\Facades\Storage::url($ekskul->image);
+                                                ?>
+                                                <img src="<?php echo e($ekskulImageUrl); ?>" alt="<?php echo e($ekskul->title); ?>" class="w-20 h-20 object-cover rounded-xl border border-slate-200">
+                                            <?php endif; ?>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between gap-3">
+                                                    <div class="min-w-0">
+                                                        <h3 class="font-bold text-slate-800 break-words"><?php echo e($ekskul->title); ?></h3>
+                                                        <p class="text-xs text-slate-500 break-words"><?php echo e($ekskul->category); ?> • <?php echo e($ekskul->coach); ?></p>
+                                                    </div>
+                                                    <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium shrink-0"><?php echo e($ekskul->registrations->count()); ?> Siswa</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-slate-600 mb-4 break-words whitespace-pre-line"><?php echo e($ekskul->description ?: 'Belum ada deskripsi.'); ?></p>
+                                        <div class="flex flex-wrap gap-2 mb-4">
+                                            <?php if($ekskul->registrations && $ekskul->registrations->count()): ?>
+                                                <?php $__currentLoopData = $ekskul->registrations->take(5); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $registration): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full"><?php echo e($registration->user->name ?? 'Siswa'); ?></span>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            <?php else: ?>
+                                                <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">Belum ada siswa</span>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="flex flex-wrap gap-2">
+                                            <a href="#detail-<?php echo e($ekskul->id); ?>" class="inline-flex items-center justify-center rounded-full bg-blue-50 text-blue-700 px-3 py-1.5 text-xs font-semibold hover:bg-blue-100 transition-colors">Lihat</a>
+                                            <a href="#edit-<?php echo e($ekskul->id); ?>" class="inline-flex items-center justify-center rounded-full bg-amber-50 text-amber-700 px-3 py-1.5 text-xs font-semibold hover:bg-amber-100 transition-colors">Edit</a>
+                                            <form action="<?php echo e(route('ekskul.delete', $ekskul->id)); ?>" method="POST" onsubmit="return confirm('Hapus eskul ini?')">
+                                                <?php echo csrf_field(); ?>
+                                                <?php echo method_field('DELETE'); ?>
+                                                <button type="submit" class="inline-flex items-center justify-center rounded-full bg-rose-50 text-rose-700 px-3 py-1.5 text-xs font-semibold hover:bg-rose-100 transition-colors">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+
+                                        <div id="detail-<?php echo e($ekskul->id); ?>" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                                            <p class="font-semibold text-slate-800 mb-2">Detail Ekskul</p>
+                                            <p class="break-words whitespace-pre-line"><?php echo e($ekskul->description ?: 'Belum ada detail deskripsi.'); ?></p>
+                                        </div>
+
+                                        <form id="edit-<?php echo e($ekskul->id); ?>" action="<?php echo e(route('ekskul.update', $ekskul->id)); ?>" method="POST" enctype="multipart/form-data" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+                                            <?php echo csrf_field(); ?>
+                                            <?php echo method_field('PUT'); ?>
+                                            <p class="font-semibold text-slate-800">Edit Ekskul</p>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Ekskul</label>
+                                                <input type="text" name="title" value="<?php echo e(old('title', $ekskul->title)); ?>" class="w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-3 py-2 text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-700 mb-1">Kategori</label>
+                                                <input type="text" name="category" value="<?php echo e(old('category', $ekskul->category)); ?>" class="w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-3 py-2 text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-700 mb-1">Deskripsi</label>
+                                                <textarea name="description" rows="4" class="w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-3 py-2 text-sm resize-y"><?php echo e(old('description', $ekskul->description)); ?></textarea>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-700 mb-1">Ganti Gambar</label>
+                                                <input type="file" name="image" accept="image/*" class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                            </div>
+                                            <button type="submit" class="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 transition-colors">
+                                                Simpan Perubahan
+                                            </button>
+                                        </form>
+                                    </div>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php else: ?>
+                                <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5 text-sm text-slate-500">
+                                    Belum ada data eskul yang dibuat oleh guru.
                                 </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm font-semibold text-amber-600">88% hadir</span>
-                                <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span>
-                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <div id="tab-jadwal" class="hidden space-y-8">
@@ -422,34 +599,140 @@
                     <div class="flex items-center justify-between gap-4 mb-6">
                         <div>
                             <h2 class="text-xl font-bold text-slate-900">Rekap Kehadiran</h2>
-                            <p class="text-sm text-slate-500 mt-1">Semua pencatatan kehadiran anggota ekstrakurikuler.</p>
+                            <p class="text-sm text-slate-500 mt-1">Semua pencatatan kehadiran anggota ekstrakurikuler yang sudah diterima.</p>
                         </div>
-                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">120 Catatan</span>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full"><?php echo e($acceptedRegistrations->sum(fn($reg) => $reg->attendanceRecords->count())); ?> Catatan</span>
                     </div>
 
-                    <div class="space-y-4">
-                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between gap-4">
-                            <div>
-                                <h3 class="font-bold text-slate-800">Jack Owhyy</h3>
-                                <p class="text-sm text-slate-500">Selasa, 17 September 2026 • Hadir</p>
-                            </div>
-                            <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-bold">Hadir</span>
+                    <?php if($acceptedRegistrations->count()): ?>
+                        <div class="space-y-4">
+                            <?php $__currentLoopData = $acceptedRegistrations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $registration): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <?php $__currentLoopData = $registration->attendanceRecords->take(3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $attendance): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between gap-4">
+                                        <div>
+                                            <h3 class="font-bold text-slate-800"><?php echo e($registration->user->name ?? '-'); ?></h3>
+                                            <p class="text-sm text-slate-500"><?php echo e($attendance->attendance_date->translatedFormat('l, d F Y')); ?> • <?php echo e(ucfirst(str_replace('_', ' ', $attendance->status))); ?></p>
+                                        </div>
+                                        <span class="text-xs px-2.5 py-1 rounded-full font-bold
+                                            <?php if($attendance->status === 'hadir'): ?> bg-emerald-50 text-emerald-600
+                                            <?php elseif($attendance->status === 'sakit_izin'): ?> bg-amber-50 text-amber-600
+                                            <?php else: ?> bg-rose-50 text-rose-600 <?php endif; ?>">
+                                            <?php echo e(ucfirst(str_replace('_', ' ', $attendance->status))); ?>
+
+                                        </span>
+                                    </div>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
-                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between gap-4">
-                            <div>
-                                <h3 class="font-bold text-slate-800">Kha Dhael</h3>
-                                <p class="text-sm text-slate-500">Kamis, 19 September 2026 • Izin</p>
-                            </div>
-                            <span class="bg-amber-50 text-amber-600 text-xs px-2.5 py-1 rounded-full font-bold">Izin</span>
+                    <?php else: ?>
+                        <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                            Belum ada data kehadiran untuk anggota yang diterima.
                         </div>
-                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between gap-4">
-                            <div>
-                                <h3 class="font-bold text-slate-800">Lancelot Trigonometri</h3>
-                                <p class="text-sm text-slate-500">Sabtu, 21 September 2026 • Alpha</p>
-                            </div>
-                            <span class="bg-rose-50 text-rose-600 text-xs px-2.5 py-1 rounded-full font-bold">Alpha</span>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div id="tab-nilai" class="hidden space-y-8">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Nilai & Rapor Ekstrakurikuler</h2>
+                            <p class="text-sm text-slate-500 mt-1">Nilai siswa per hari. Guru bisa menambah atau mengedit penilaian pada hari yang sama dengan skala 0–100.</p>
                         </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-violet-600 bg-violet-50 px-3 py-1 rounded-full"><?php echo e($evaluations->count()); ?> Data</span>
                     </div>
+
+                    <div class="space-y-5">
+                        <?php $__currentLoopData = $acceptedRegistrations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $registration): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php
+                                $studentEvaluationsForRegistration = $registration->evaluations()->orderByDesc('evaluation_date')->get();
+                                $latestEvaluation = $studentEvaluationsForRegistration->first();
+                            ?>
+
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-slate-800"><?php echo e($registration->user->name ?? '-'); ?></h3>
+                                        <p class="text-sm text-slate-500"><?php echo e($registration->ekskul->title ?? '-'); ?> • <?php echo e($registration->user->class_name ?? 'Belum ada kelas'); ?></p>
+                                    </div>
+                                    <?php if($latestEvaluation): ?>
+                                        <?php
+                                            $score = (int) $latestEvaluation->score;
+                                            $grade = $score >= 90 ? 'A' : ($score >= 80 ? 'B' : ($score >= 70 ? 'C' : ($score >= 60 ? 'D' : 'F')));
+                                            $gradeClass = $score >= 90 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : ($score >= 80 ? 'bg-blue-50 text-blue-700 border border-blue-200' : ($score >= 70 ? 'bg-amber-50 text-amber-700 border border-amber-200' : ($score >= 60 ? 'bg-orange-50 text-orange-700 border border-orange-200' : 'bg-rose-50 text-rose-700 border border-rose-200')));
+                                        ?>
+                                        <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold <?php echo e($gradeClass); ?>">Nilai terakhir: <?php echo e($score); ?> (<?php echo e($grade); ?>)</span>
+                                    <?php endif; ?>
+                                </div>
+
+                                <form action="<?php echo e(route('evaluation.store', $registration->id)); ?>" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+                                    <?php echo csrf_field(); ?>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal</label>
+                                        <input type="date" name="evaluation_date" value="<?php echo e(old('evaluation_date', $latestEvaluation?->evaluation_date?->format('Y-m-d') ?? now()->toDateString())); ?>" required class="w-full rounded-xl border-slate-200 focus:border-violet-500 focus:ring-violet-500 px-3 py-2.5 text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nilai (0-100)</label>
+                                        <input type="number" name="score" min="0" max="100" value="<?php echo e(old('score', $latestEvaluation?->score ?? 0)); ?>" required class="w-full rounded-xl border-slate-200 focus:border-violet-500 focus:ring-violet-500 px-3 py-2.5 text-sm">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">Catatan</label>
+                                        <input type="text" name="notes" value="<?php echo e(old('notes', $latestEvaluation?->notes ?? '')); ?>" placeholder="Catatan evaluasi" class="w-full rounded-xl border-slate-200 focus:border-violet-500 focus:ring-violet-500 px-3 py-2.5 text-sm">
+                                    </div>
+                                    <div class="md:col-span-4 flex justify-end">
+                                        <button type="submit" class="rounded-full bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-violet-700 transition-colors">
+                                            Simpan / Edit Nilai
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    </div>
+
+                    <?php if($evaluations->count()): ?>
+                        <div class="mt-8 overflow-x-auto">
+                            <table class="min-w-full text-left border border-slate-200 rounded-2xl overflow-hidden">
+                                <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-600">
+                                    <tr>
+                                        <th class="px-4 py-3">Nama</th>
+                                        <th class="px-4 py-3">Ekskul</th>
+                                        <th class="px-4 py-3">Tanggal</th>
+                                        <th class="px-4 py-3">Nilai</th>
+                                        <th class="px-4 py-3">Huruf</th>
+                                        <th class="px-4 py-3">Catatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 bg-white text-sm text-slate-700">
+                                    <?php $__currentLoopData = $evaluations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $evaluation): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php
+                                            $score = (int) ($evaluation->score ?? 0);
+                                            $scoreGrade = $score >= 90 ? 'A' : ($score >= 80 ? 'B' : ($score >= 70 ? 'C' : ($score >= 60 ? 'D' : 'F')));
+                                            $scoreColor = $score >= 90 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : ($score >= 80 ? 'bg-blue-50 text-blue-700 border border-blue-200' : ($score >= 70 ? 'bg-amber-50 text-amber-700 border border-amber-200' : ($score >= 60 ? 'bg-orange-50 text-orange-700 border border-orange-200' : 'bg-rose-50 text-rose-700 border border-rose-200')));
+                                        ?>
+                                        <tr>
+                                            <td class="px-4 py-3 font-medium"><?php echo e($evaluation->user->name ?? '-'); ?></td>
+                                            <td class="px-4 py-3"><?php echo e($evaluation->ekskul->title ?? '-'); ?></td>
+                                            <td class="px-4 py-3"><?php echo e($evaluation->evaluation_date ? $evaluation->evaluation_date->translatedFormat('d F Y') : '-'); ?></td>
+                                            <td class="px-4 py-3">
+                                                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold" style="background: linear-gradient(90deg, rgb(239,68,68) 0%, rgb(250,204,21) 50%, rgb(34,197,94) 100%); color: white;">
+                                                    <?php echo e($score); ?>
+
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold <?php echo e($scoreColor); ?>"><?php echo e($scoreGrade); ?></span>
+                                            </td>
+                                            <td class="px-4 py-3 max-w-xs break-words"><?php echo e($evaluation->notes ?: '-'); ?></td>
+                                        </tr>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                            Belum ada data evaluasi untuk ekstrakurikuler yang dibina.
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -550,8 +833,10 @@
             const tabs = {
                 dashboard: document.getElementById('tab-dashboard'),
                 anggota: document.getElementById('tab-anggota'),
+                ekskul: document.getElementById('tab-ekskul'),
                 jadwal: document.getElementById('tab-jadwal'),
                 kehadiran: document.getElementById('tab-kehadiran'),
+                nilai: document.getElementById('tab-nilai'),
                 profile: document.getElementById('tab-profile'),
                 settings: document.getElementById('tab-settings'),
             };
@@ -586,6 +871,44 @@
                 element.addEventListener('click', function () {
                     activateTab('profile');
                 });
+            });
+
+            const evaluationModal = document.getElementById('evaluation-modal');
+            const evaluationForm = document.getElementById('evaluation-form');
+            const closeEvaluationModal = document.getElementById('close-evaluation-modal');
+            const cancelEvaluationModal = document.getElementById('cancel-evaluation-modal');
+
+            document.querySelectorAll('.open-evaluation-modal').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const evaluationId = button.dataset.evaluationId;
+                    const studentName = button.dataset.userName;
+                    const ekskulTitle = button.dataset.ekskulTitle;
+                    const score = button.dataset.score;
+                    const date = button.dataset.date;
+                    const notes = button.dataset.notes;
+
+                    document.getElementById('modal-student-name').value = studentName;
+                    document.getElementById('modal-ekskul-title').value = ekskulTitle;
+                    document.getElementById('modal-score').value = score;
+                    document.getElementById('modal-date').value = date;
+                    document.getElementById('modal-notes').value = notes;
+
+                    evaluationForm.action = `<?php echo e(url('/guru/evaluation')); ?>/${evaluationId}`;
+                    evaluationModal.classList.remove('hidden');
+                });
+            });
+
+            function hideEvaluationModal() {
+                evaluationModal.classList.add('hidden');
+                evaluationForm.reset();
+            }
+
+            closeEvaluationModal.addEventListener('click', hideEvaluationModal);
+            cancelEvaluationModal.addEventListener('click', hideEvaluationModal);
+            evaluationModal.addEventListener('click', function (event) {
+                if (event.target === evaluationModal) {
+                    hideEvaluationModal();
+                }
             });
 
             const initialTab = window.location.hash.replace('#', '') || 'dashboard';

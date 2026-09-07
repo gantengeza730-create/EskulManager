@@ -1,2 +1,3 @@
 storage/app/public/avatars/*
 storage/framework/sessions/*
+*.cache

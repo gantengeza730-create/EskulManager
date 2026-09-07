@@ -55,7 +55,7 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     Kehadiran
                 </a>
-                <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                <a href="#" data-tab="nilai" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Nilai & Rapor
                 </a>
@@ -502,6 +502,54 @@
                     <?php endif; ?>
                 </div>
 
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900">Referensi Eskul yang Dibuat Guru</h2>
+                            <p class="text-sm text-slate-500 mt-1">Daftar ekskul yang dikelola guru dapat dilihat sebagai referensi sebelum menambah atau memilih kegiatan.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-violet-600 bg-violet-50 px-3 py-1 rounded-full">Referensi</span>
+                    </div>
+
+                    <?php if(isset($ekskuls) && $ekskuls->count()): ?>
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            <?php $__currentLoopData = $ekskuls; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ekskul): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 hover:bg-white transition-colors">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-14 h-14 rounded-2xl bg-violet-100 overflow-hidden shrink-0 flex items-center justify-center">
+                                            <?php if($ekskul->image): ?>
+                                                <img src="<?php echo e($resolveEkskulImage($ekskul->image)); ?>" alt="<?php echo e($ekskul->title); ?>" class="w-full h-full object-cover">
+                                            <?php else: ?>
+                                                <svg class="w-6 h-6 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <h3 class="font-bold text-slate-900 truncate"><?php echo e($ekskul->title); ?></h3>
+                                            <p class="text-xs text-slate-500 mt-1">Pembina: <?php echo e($ekskul->coach); ?></p>
+                                            <p class="text-xs text-slate-400 mt-1"><?php echo e($ekskul->category); ?></p>
+                                        </div>
+                                    </div>
+
+                                    <p class="text-sm text-slate-600 mt-4 line-clamp-3"><?php echo e($ekskul->description ?: 'Belum ada deskripsi untuk eskul ini.'); ?></p>
+
+                                    <details class="mt-4 rounded-xl border border-slate-200 bg-white px-3 py-2">
+                                        <summary class="cursor-pointer list-none text-xs font-semibold text-slate-700">Lihat detail</summary>
+                                        <div class="mt-3 text-xs text-slate-600 space-y-2">
+                                            <p><span class="font-semibold text-slate-700">Pembina:</span> <?php echo e($ekskul->coach); ?></p>
+                                            <p><span class="font-semibold text-slate-700">Kategori:</span> <?php echo e($ekskul->category); ?></p>
+                                            <p><span class="font-semibold text-slate-700">Deskripsi:</span> <?php echo e($ekskul->description ?: 'Belum ada deskripsi.'); ?></p>
+                                        </div>
+                                    </details>
+                                </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                            Belum ada referensi eskul dari guru yang tersedia.
+                        </div>
+                    <?php endif; ?>
+                </div>
+
                 <?php if(auth()->user()->role === 'siswa'): ?>
                     <div id="formulir-pendaftaran" class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
                         <div class="flex items-center justify-between gap-4 mb-6">
@@ -535,15 +583,30 @@
                                         <p class="text-sm text-slate-600 mt-4 line-clamp-3"><?php echo e($ekskul->description); ?></p>
 
                                         <?php
-                                            $alreadyJoined = isset($registrations) && $registrations->contains('ekskul_id', $ekskul->id);
+                                            $existingRegistration = isset($registrations) ? $registrations->firstWhere('ekskul_id', $ekskul->id) : null;
+                                            $alreadyJoined = $existingRegistration !== null;
+                                            $isPending = false;
+                                            if (isset($allStudentRegistrations)) {
+                                                $isPending = $allStudentRegistrations->where('ekskul_id', $ekskul->id)->contains(fn($item) => $item->status === 'pending');
+                                            }
+                                            $pendingRegistration = isset($allStudentRegistrations) ? $allStudentRegistrations->firstWhere('ekskul_id', $ekskul->id) : null;
                                         ?>
 
                                         <div class="mt-4 flex items-center justify-between gap-3">
-                                            <span class="text-xs font-semibold <?php echo e($alreadyJoined ? 'text-emerald-600' : 'text-slate-400'); ?>">
-                                                <?php echo e($alreadyJoined ? 'Sudah terdaftar' : 'Belum terdaftar'); ?>
-
+                                            <span class="text-xs font-semibold <?php echo e($alreadyJoined ? 'text-emerald-600' : ($pendingRegistration && $pendingRegistration->status === 'pending' ? 'text-amber-600' : 'text-slate-400')); ?>">
+                                                <?php if($pendingRegistration && $pendingRegistration->status === 'pending'): ?>
+                                                    Menunggu persetujuan
+                                                <?php elseif($alreadyJoined): ?>
+                                                    Sudah terdaftar
+                                                <?php else: ?>
+                                                    Belum terdaftar
+                                                <?php endif; ?>
                                             </span>
-                                            <?php if($alreadyJoined): ?>
+                                            <?php if($pendingRegistration && $pendingRegistration->status === 'pending'): ?>
+                                                <button type="button" disabled class="inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-semibold text-white bg-amber-400 cursor-not-allowed transition-colors">
+                                                    Ditinjau
+                                                </button>
+                                            <?php elseif($alreadyJoined): ?>
                                                 <button type="button" disabled class="inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-semibold text-white bg-slate-400 cursor-not-allowed transition-colors">
                                                     Terdaftar
                                                 </button>
@@ -563,6 +626,61 @@
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
+            </div>
+
+            <div id="tab-nilai" class="hidden space-y-8">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Tabel Penilaian / Evaluasi Ekstrakurikuler</h2>
+                            <p class="text-sm text-slate-500 mt-1">Data evaluasi seluruh eskul yang kamu ikuti, disajikan dalam bentuk read-only.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
+                            <?php echo e(isset($studentEvaluations) ? $studentEvaluations->count() : 0); ?> Data
+                        </span>
+                    </div>
+
+                    <?php if(isset($studentEvaluations) && $studentEvaluations->count()): ?>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-left border border-slate-200 rounded-2xl overflow-hidden">
+                                <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-600">
+                                    <tr>
+                                        <th class="px-4 py-3">Ekskul</th>
+                                        <th class="px-4 py-3">Pembina</th>
+                                        <th class="px-4 py-3">Nilai</th>
+                                        <th class="px-4 py-3">Tanggal</th>
+                                        <th class="px-4 py-3">Catatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 bg-white text-sm text-slate-700">
+                                    <?php $__currentLoopData = $studentEvaluations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $evaluation): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php
+                                            $evaluationScore = (int) ($evaluation->score ?? 0);
+                                            $evaluationLetter = $evaluationScore >= 90 ? 'A' : ($evaluationScore >= 80 ? 'B' : ($evaluationScore >= 70 ? 'C' : ($evaluationScore >= 60 ? 'D' : 'F')));
+                                            $evaluationBadgeClass = $evaluationScore >= 90 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : ($evaluationScore >= 80 ? 'bg-blue-50 text-blue-700 border border-blue-200' : ($evaluationScore >= 70 ? 'bg-amber-50 text-amber-700 border border-amber-200' : ($evaluationScore >= 60 ? 'bg-orange-50 text-orange-700 border border-orange-200' : 'bg-rose-50 text-rose-700 border border-rose-200')));
+                                        ?>
+                                        <tr>
+                                            <td class="px-4 py-3 font-medium"><?php echo e($evaluation->ekskul->title ?? '-'); ?></td>
+                                            <td class="px-4 py-3"><?php echo e($evaluation->ekskul->coach ?? '-'); ?></td>
+                                            <td class="px-4 py-3">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold text-white" style="background: linear-gradient(90deg, rgb(239,68,68) 0%, rgb(250,204,21) 50%, rgb(34,197,94) 100%);"><?php echo e($evaluationScore); ?></span>
+                                                    <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold <?php echo e($evaluationBadgeClass); ?>"><?php echo e($evaluationLetter); ?></span>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3"><?php echo e($evaluation->evaluation_date ? $evaluation->evaluation_date->translatedFormat('d F Y') : '-'); ?></td>
+                                            <td class="px-4 py-3"><?php echo e($evaluation->notes ?: '-'); ?></td>
+                                        </tr>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                            Belum ada data evaluasi untuk eskul yang kamu ikuti.
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
 
             <div id="tab-profile" class="hidden">
@@ -820,6 +938,7 @@
                 jadwal: document.getElementById('tab-jadwal'),
                 kehadiran: document.getElementById('tab-kehadiran'),
                 ekskul: document.getElementById('tab-ekskul'),
+                nilai: document.getElementById('tab-nilai'),
                 profile: document.getElementById('tab-profile'),
                 settings: document.getElementById('tab-settings'),
             };

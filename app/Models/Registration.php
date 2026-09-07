@@ -24,4 +24,19 @@ class Registration extends Model
     {
         return $this->belongsTo(Ekskul::class);
     }
+
+    public function attendanceRecords()
+    {
+        return $this->hasMany(AttendanceRecord::class);
+    }
+
+    public function evaluations()
+    {
+        return $this->hasMany(EkskulEvaluation::class);
+    }
+
+    public function evaluation()
+    {
+        return $this->hasMany(EkskulEvaluation::class);
+    }
 }

@@ -36,7 +36,20 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
                         Anggota
                     </div>
-                    <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">45</span>
+                    @php $anggotaCount = ($acceptedRegistrations->count() + $pendingRegistrations->count()); @endphp
+                    @if($anggotaCount > 0)
+                        <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $anggotaCount }}</span>
+                    @endif
+                </a>
+
+                <a href="#" data-tab="ekskul" class="flex items-center justify-between text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path></svg>
+                        Ekskul Saya
+                    </div>
+                    @if($ekskuls->count() > 0)
+                        <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">{{ $ekskuls->count() }}</span>
+                    @endif
                 </a>
 
                 <a href="#" data-tab="jadwal" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
@@ -49,7 +62,7 @@
                     Kehadiran
                 </a>
 
-                <a href="#" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
+                <a href="#" data-tab="nilai" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-[#2E3C51]/50 px-4 py-2.5 rounded-lg text-sm font-medium transition-all">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Nilai & Rapor
                 </a>
@@ -123,7 +136,11 @@
 
                 <button class="relative p-2 text-slate-400 hover:text-slate-600 rounded-full border border-slate-200 bg-white">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                    @if(($pendingRegistrations->count() + $acceptedRegistrations->count()) > 0)
+                        <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 flex items-center justify-center text-[10px] font-bold bg-red-500 text-white rounded-full border-2 border-white">
+                            {{ $pendingRegistrations->count() + $acceptedRegistrations->count() }}
+                        </span>
+                    @endif
                 </button>
 
                 @if($user->avatar_path)
@@ -160,8 +177,8 @@
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                             </div>
                         </div>
-                        <h2 class="text-3xl font-black text-slate-800">45</h2>
-                        <p class="text-[10px] text-slate-400 mt-1 font-medium">Siswa aktif di ekstrakurikuler</p>
+                        <h2 class="text-3xl font-black text-slate-800">{{ $acceptedRegistrations->count() }}</h2>
+                        <p class="text-[10px] text-slate-400 mt-1 font-medium">Siswa aktif yang sudah diterima</p>
                     </div>
 
                     <div class="bg-white p-5 border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
@@ -171,10 +188,10 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                             </div>
                         </div>
-                        <h2 class="text-3xl font-black text-emerald-600">92%</h2>
-                        <p class="text-[10px] text-emerald-600 mt-1 font-bold">+2.4% dari bulan lalu</p>
+                        <h2 class="text-3xl font-black text-emerald-600">{{ number_format($averageAttendance, 1) }}%</h2>
+                        <p class="text-[10px] text-emerald-600 mt-1 font-bold">Berdasarkan catatan masuk yang valid</p>
                         <div class="mt-3 h-2 rounded-full bg-slate-100 overflow-hidden">
-                            <div class="h-full rounded-full w-[92%] bg-gradient-to-r from-red-400 via-yellow-400 to-green-500"></div>
+                            <div class="h-full rounded-full" style="width: {{ min(100, max(0, $averageAttendance)) }}%; background: linear-gradient(90deg, #f87171 0%, #facc15 55%, #22c55e 100%);"></div>
                         </div>
                     </div>
 
@@ -331,56 +348,215 @@
                 <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
                     <div class="flex items-center justify-between gap-4 mb-6">
                         <div>
-                            <h2 class="text-xl font-bold text-slate-900">Daftar Anggota Ekstrakurikuler</h2>
-                            <p class="text-sm text-slate-500 mt-1">Kelola siswa, riwayat kehadiran, dan status aktif.</p>
+                            <h2 class="text-xl font-bold text-slate-900">Data Pendaftar & Anggota Ekstrakurikuler</h2>
+                            <p class="text-sm text-slate-500 mt-1">Kelola siswa yang menunggu persetujuan serta data anggota yang sudah diterima.</p>
                         </div>
-                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">45 Siswa</span>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">{{ $acceptedRegistrations->count() }} Anggota</span>
                     </div>
 
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between gap-4 border border-slate-200 rounded-2xl p-4">
-                            <div class="flex items-center gap-3">
-                                <img src="https://ui-avatars.com/api/?name=Jack+Owhyy&background=0D8ABC&color=fff" class="w-12 h-12 rounded-full object-cover border border-slate-200" alt="Jack">
-                                <div>
-                                    <h3 class="font-bold text-slate-800">Jack Owhyy</h3>
-                                    <p class="text-xs text-slate-500">XII RPL 1 • Futsal</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm font-semibold text-emerald-600">98% hadir</span>
-                                <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span>
+                    @if($pendingRegistrations->count())
+                        <div class="mb-8">
+                            <h3 class="text-sm font-bold text-slate-800 mb-3">Pendaftar Menunggu Persetujuan</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full text-left border border-slate-200 rounded-2xl overflow-hidden">
+                                    <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-600">
+                                        <tr>
+                                            <th class="px-4 py-3">Nama</th>
+                                            <th class="px-4 py-3">Ekskul</th>
+                                            <th class="px-4 py-3">Kelas</th>
+                                            <th class="px-4 py-3">Status</th>
+                                            <th class="px-4 py-3 text-right">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-200 bg-white text-sm text-slate-700">
+                                        @foreach($pendingRegistrations as $pending)
+                                            <tr>
+                                                <td class="px-4 py-3 font-medium">{{ $pending->user->name ?? '-' }}</td>
+                                                <td class="px-4 py-3">{{ $pending->ekskul->title ?? '-' }}</td>
+                                                <td class="px-4 py-3">{{ $pending->user->class_name ?? '-' }}</td>
+                                                <td class="px-4 py-3">
+                                                    <span class="bg-amber-50 text-amber-600 text-xs px-2.5 py-1 rounded-full font-medium">Pending</span>
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <div class="flex justify-end gap-2">
+                                                        <form action="{{ route('registration.accept', $pending->id) }}" method="POST">
+                                                            @csrf
+                                                            <button type="submit" class="rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700">Terima</button>
+                                                        </form>
+                                                        <form action="{{ route('registration.reject', $pending->id) }}" method="POST">
+                                                            @csrf
+                                                            <button type="submit" class="rounded-full bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-700">Tolak</button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
+                    @else
+                        <div class="mb-8 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-sm text-slate-500">
+                            Tidak ada pendaftar yang menunggu persetujuan.
+                        </div>
+                    @endif
 
-                        <div class="flex items-center justify-between gap-4 border border-slate-200 rounded-2xl p-4">
-                            <div class="flex items-center gap-3">
-                                <img src="https://ui-avatars.com/api/?name=Kha+Dhael&background=0D8ABC&color=fff" class="w-12 h-12 rounded-full object-cover border border-slate-200" alt="Kha">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 mb-3">Anggota Aktif</h3>
+                        @if($acceptedRegistrations->count())
+                            <div class="space-y-3">
+                                @foreach($acceptedRegistrations as $registration)
+                                    <div class="flex items-center justify-between gap-4 border border-slate-200 rounded-2xl p-4">
+                                        <div class="flex items-center gap-3">
+                                            <img src="{{ $registration->user && $registration->user->avatar_path ? asset('storage/' . $registration->user->avatar_path) : 'https://ui-avatars.com/api/?name=' . urlencode($registration->user->name ?? 'User') . '&background=0D8ABC&color=fff' }}" class="w-12 h-12 rounded-full object-cover border border-slate-200" alt="{{ $registration->user->name ?? 'User' }}">
+                                            <div>
+                                                <h3 class="font-bold text-slate-800">{{ $registration->user->name ?? '-' }}</h3>
+                                                <p class="text-xs text-slate-500">{{ $registration->user->class_name ?? '-' }} • {{ $registration->ekskul->title ?? '-' }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            @php
+                                                $memberAttendance = $registration->attendanceRecords->where('status', 'hadir')->count();
+                                                $memberTotalAttendance = $registration->attendanceRecords->count();
+                                                $memberAttendancePercent = $memberTotalAttendance > 0 ? round(($memberAttendance / $memberTotalAttendance) * 100, 1) : 0;
+                                            @endphp
+                                            <span class="text-sm font-semibold {{ $memberAttendancePercent >= 80 ? 'text-emerald-600' : 'text-amber-600' }}">{{ $memberAttendancePercent }}% hadir</span>
+                                            <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                                Belum ada anggota yang diterima.
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-ekskul" class="hidden space-y-8">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Ekskul Saya</h2>
+                            <p class="text-sm text-slate-500 mt-1">Tambah eskul baru, kelola siswa yang terdaftar, dan lihat detail kegiatan.</p>
+                        </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">3 Eskul</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-[1.2fr_1.8fr] gap-6">
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6 min-w-0">
+                            <h3 class="text-base font-bold text-slate-800 mb-4">Tambah Eskul Baru</h3>
+                            <form action="{{ route('ekskul.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                                @csrf
                                 <div>
-                                    <h3 class="font-bold text-slate-800">Kha Dhael</h3>
-                                    <p class="text-xs text-slate-500">XII TKJ 2 • Futsal</p>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Nama Eskul</label>
+                                    <input type="text" name="title" placeholder="Contoh: Futsal" required class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm">
                                 </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm font-semibold text-emerald-600">94% hadir</span>
-                                <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span>
-                            </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Kategori</label>
+                                    <input type="text" name="category" placeholder="Contoh: Olahraga" required class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Deskripsi</label>
+                                    <textarea name="description" rows="5" placeholder="Tuliskan deskripsi singkat kegiatan eskul..." class="w-full rounded-2xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-4 py-3 text-sm resize-y"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Gambar Eskul</label>
+                                    <input type="file" name="image" accept="image/*" class="block w-full text-sm text-slate-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                </div>
+                                <button type="submit" class="inline-flex items-center justify-center rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition-colors">
+                                    Simpan Eskul
+                                </button>
+                            </form>
                         </div>
 
-                        <div class="flex items-center justify-between gap-4 border border-slate-200 rounded-2xl p-4">
-                            <div class="flex items-center gap-3">
-                                <img src="https://ui-avatars.com/api/?name=Lancelot+T&background=0D8ABC&color=fff" class="w-12 h-12 rounded-full object-cover border border-slate-200" alt="Lancelot">
-                                <div>
-                                    <h3 class="font-bold text-slate-800">Lancelot Trigonometri</h3>
-                                    <p class="text-xs text-slate-500">XI RPL 2 • Futsal</p>
+                        <div class="space-y-4 min-w-0">
+                            @if(isset($ekskuls) && $ekskuls->count())
+                                @foreach($ekskuls as $ekskul)
+                                    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm min-w-0">
+                                        <div class="flex items-start gap-4 mb-3">
+                                            @if($ekskul->image)
+                                                @php
+                                                    $ekskulImageUrl = \Illuminate\Support\Str::startsWith((string) $ekskul->image, ['http://', 'https://', '/'])
+                                                        ? $ekskul->image
+                                                        : \Illuminate\Support\Facades\Storage::url($ekskul->image);
+                                                @endphp
+                                                <img src="{{ $ekskulImageUrl }}" alt="{{ $ekskul->title }}" class="w-20 h-20 object-cover rounded-xl border border-slate-200">
+                                            @endif
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between gap-3">
+                                                    <div class="min-w-0">
+                                                        <h3 class="font-bold text-slate-800 break-words">{{ $ekskul->title }}</h3>
+                                                        <p class="text-xs text-slate-500 break-words">{{ $ekskul->category }} • {{ $ekskul->coach }}</p>
+                                                    </div>
+                                                    <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium shrink-0">{{ $ekskul->registrations->count() }} Siswa</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-slate-600 mb-4 break-words whitespace-pre-line">{{ $ekskul->description ?: 'Belum ada deskripsi.' }}</p>
+                                        <div class="flex flex-wrap gap-2 mb-4">
+                                            @if($ekskul->registrations && $ekskul->registrations->count())
+                                                @foreach($ekskul->registrations->take(5) as $registration)
+                                                    <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">{{ $registration->user->name ?? 'Siswa' }}</span>
+                                                @endforeach
+                                            @else
+                                                <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">Belum ada siswa</span>
+                                            @endif
+                                        </div>
+                                        <div class="flex flex-wrap gap-2">
+                                            <a href="#detail-{{ $ekskul->id }}" class="inline-flex items-center justify-center rounded-full bg-blue-50 text-blue-700 px-3 py-1.5 text-xs font-semibold hover:bg-blue-100 transition-colors">Lihat</a>
+                                            <a href="#edit-{{ $ekskul->id }}" class="inline-flex items-center justify-center rounded-full bg-amber-50 text-amber-700 px-3 py-1.5 text-xs font-semibold hover:bg-amber-100 transition-colors">Edit</a>
+                                            <form action="{{ route('ekskul.delete', $ekskul->id) }}" method="POST" onsubmit="return confirm('Hapus eskul ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="inline-flex items-center justify-center rounded-full bg-rose-50 text-rose-700 px-3 py-1.5 text-xs font-semibold hover:bg-rose-100 transition-colors">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+
+                                        <div id="detail-{{ $ekskul->id }}" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                                            <p class="font-semibold text-slate-800 mb-2">Detail Ekskul</p>
+                                            <p class="break-words whitespace-pre-line">{{ $ekskul->description ?: 'Belum ada detail deskripsi.' }}</p>
+                                        </div>
+
+                                        <form id="edit-{{ $ekskul->id }}" action="{{ route('ekskul.update', $ekskul->id) }}" method="POST" enctype="multipart/form-data" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+                                            @csrf
+                                            @method('PUT')
+                                            <p class="font-semibold text-slate-800">Edit Ekskul</p>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Ekskul</label>
+                                                <input type="text" name="title" value="{{ old('title', $ekskul->title) }}" class="w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-3 py-2 text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-700 mb-1">Kategori</label>
+                                                <input type="text" name="category" value="{{ old('category', $ekskul->category) }}" class="w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-3 py-2 text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-700 mb-1">Deskripsi</label>
+                                                <textarea name="description" rows="4" class="w-full rounded-xl border-slate-200 focus:border-blue-500 focus:ring-blue-500 px-3 py-2 text-sm resize-y">{{ old('description', $ekskul->description) }}</textarea>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-700 mb-1">Ganti Gambar</label>
+                                                <input type="file" name="image" accept="image/*" class="block w-full text-xs text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                            </div>
+                                            <button type="submit" class="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 transition-colors">
+                                                Simpan Perubahan
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5 text-sm text-slate-500">
+                                    Belum ada data eskul yang dibuat oleh guru.
                                 </div>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm font-semibold text-amber-600">88% hadir</span>
-                                <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-medium">Aktif</span>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <div id="tab-jadwal" class="hidden space-y-8">
@@ -421,34 +597,138 @@
                     <div class="flex items-center justify-between gap-4 mb-6">
                         <div>
                             <h2 class="text-xl font-bold text-slate-900">Rekap Kehadiran</h2>
-                            <p class="text-sm text-slate-500 mt-1">Semua pencatatan kehadiran anggota ekstrakurikuler.</p>
+                            <p class="text-sm text-slate-500 mt-1">Semua pencatatan kehadiran anggota ekstrakurikuler yang sudah diterima.</p>
                         </div>
-                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">120 Catatan</span>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full">{{ $acceptedRegistrations->sum(fn($reg) => $reg->attendanceRecords->count()) }} Catatan</span>
                     </div>
 
-                    <div class="space-y-4">
-                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between gap-4">
-                            <div>
-                                <h3 class="font-bold text-slate-800">Jack Owhyy</h3>
-                                <p class="text-sm text-slate-500">Selasa, 17 September 2026 • Hadir</p>
-                            </div>
-                            <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-bold">Hadir</span>
+                    @if($acceptedRegistrations->count())
+                        <div class="space-y-4">
+                            @foreach($acceptedRegistrations as $registration)
+                                @foreach($registration->attendanceRecords->take(3) as $attendance)
+                                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between gap-4">
+                                        <div>
+                                            <h3 class="font-bold text-slate-800">{{ $registration->user->name ?? '-' }}</h3>
+                                            <p class="text-sm text-slate-500">{{ $attendance->attendance_date->translatedFormat('l, d F Y') }} • {{ ucfirst(str_replace('_', ' ', $attendance->status)) }}</p>
+                                        </div>
+                                        <span class="text-xs px-2.5 py-1 rounded-full font-bold
+                                            @if($attendance->status === 'hadir') bg-emerald-50 text-emerald-600
+                                            @elseif($attendance->status === 'sakit_izin') bg-amber-50 text-amber-600
+                                            @else bg-rose-50 text-rose-600 @endif">
+                                            {{ ucfirst(str_replace('_', ' ', $attendance->status)) }}
+                                        </span>
+                                    </div>
+                                @endforeach
+                            @endforeach
                         </div>
-                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between gap-4">
-                            <div>
-                                <h3 class="font-bold text-slate-800">Kha Dhael</h3>
-                                <p class="text-sm text-slate-500">Kamis, 19 September 2026 • Izin</p>
-                            </div>
-                            <span class="bg-amber-50 text-amber-600 text-xs px-2.5 py-1 rounded-full font-bold">Izin</span>
+                    @else
+                        <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                            Belum ada data kehadiran untuk anggota yang diterima.
                         </div>
-                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex items-center justify-between gap-4">
-                            <div>
-                                <h3 class="font-bold text-slate-800">Lancelot Trigonometri</h3>
-                                <p class="text-sm text-slate-500">Sabtu, 21 September 2026 • Alpha</p>
-                            </div>
-                            <span class="bg-rose-50 text-rose-600 text-xs px-2.5 py-1 rounded-full font-bold">Alpha</span>
+                    @endif
+                </div>
+            </div>
+
+            <div id="tab-nilai" class="hidden space-y-8">
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-6">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Nilai & Rapor Ekstrakurikuler</h2>
+                            <p class="text-sm text-slate-500 mt-1">Nilai siswa per hari. Guru bisa menambah atau mengedit penilaian pada hari yang sama dengan skala 0–100.</p>
                         </div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-violet-600 bg-violet-50 px-3 py-1 rounded-full">{{ $evaluations->count() }} Data</span>
                     </div>
+
+                    <div class="space-y-5">
+                        @foreach($acceptedRegistrations as $registration)
+                            @php
+                                $studentEvaluationsForRegistration = $registration->evaluations()->orderByDesc('evaluation_date')->get();
+                                $latestEvaluation = $studentEvaluationsForRegistration->first();
+                            @endphp
+
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-slate-800">{{ $registration->user->name ?? '-' }}</h3>
+                                        <p class="text-sm text-slate-500">{{ $registration->ekskul->title ?? '-' }} • {{ $registration->user->class_name ?? 'Belum ada kelas' }}</p>
+                                    </div>
+                                    @if($latestEvaluation)
+                                        @php
+                                            $score = (int) $latestEvaluation->score;
+                                            $grade = $score >= 90 ? 'A' : ($score >= 80 ? 'B' : ($score >= 70 ? 'C' : ($score >= 60 ? 'D' : 'F')));
+                                            $gradeClass = $score >= 90 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : ($score >= 80 ? 'bg-blue-50 text-blue-700 border border-blue-200' : ($score >= 70 ? 'bg-amber-50 text-amber-700 border border-amber-200' : ($score >= 60 ? 'bg-orange-50 text-orange-700 border border-orange-200' : 'bg-rose-50 text-rose-700 border border-rose-200')));
+                                        @endphp
+                                        <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold {{ $gradeClass }}">Nilai terakhir: {{ $score }} ({{ $grade }})</span>
+                                    @endif
+                                </div>
+
+                                <form action="{{ route('evaluation.store', $registration->id) }}" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+                                    @csrf
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal</label>
+                                        <input type="date" name="evaluation_date" value="{{ old('evaluation_date', $latestEvaluation?->evaluation_date?->format('Y-m-d') ?? now()->toDateString()) }}" required class="w-full rounded-xl border-slate-200 focus:border-violet-500 focus:ring-violet-500 px-3 py-2.5 text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nilai (0-100)</label>
+                                        <input type="number" name="score" min="0" max="100" value="{{ old('score', $latestEvaluation?->score ?? 0) }}" required class="w-full rounded-xl border-slate-200 focus:border-violet-500 focus:ring-violet-500 px-3 py-2.5 text-sm">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">Catatan</label>
+                                        <input type="text" name="notes" value="{{ old('notes', $latestEvaluation?->notes ?? '') }}" placeholder="Catatan evaluasi" class="w-full rounded-xl border-slate-200 focus:border-violet-500 focus:ring-violet-500 px-3 py-2.5 text-sm">
+                                    </div>
+                                    <div class="md:col-span-4 flex justify-end">
+                                        <button type="submit" class="rounded-full bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-violet-700 transition-colors">
+                                            Simpan / Edit Nilai
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @if($evaluations->count())
+                        <div class="mt-8 overflow-x-auto">
+                            <table class="min-w-full text-left border border-slate-200 rounded-2xl overflow-hidden">
+                                <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-600">
+                                    <tr>
+                                        <th class="px-4 py-3">Nama</th>
+                                        <th class="px-4 py-3">Ekskul</th>
+                                        <th class="px-4 py-3">Tanggal</th>
+                                        <th class="px-4 py-3">Nilai</th>
+                                        <th class="px-4 py-3">Huruf</th>
+                                        <th class="px-4 py-3">Catatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 bg-white text-sm text-slate-700">
+                                    @foreach($evaluations as $evaluation)
+                                        @php
+                                            $score = (int) ($evaluation->score ?? 0);
+                                            $scoreGrade = $score >= 90 ? 'A' : ($score >= 80 ? 'B' : ($score >= 70 ? 'C' : ($score >= 60 ? 'D' : 'F')));
+                                            $scoreColor = $score >= 90 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : ($score >= 80 ? 'bg-blue-50 text-blue-700 border border-blue-200' : ($score >= 70 ? 'bg-amber-50 text-amber-700 border border-amber-200' : ($score >= 60 ? 'bg-orange-50 text-orange-700 border border-orange-200' : 'bg-rose-50 text-rose-700 border border-rose-200')));
+                                        @endphp
+                                        <tr>
+                                            <td class="px-4 py-3 font-medium">{{ $evaluation->user->name ?? '-' }}</td>
+                                            <td class="px-4 py-3">{{ $evaluation->ekskul->title ?? '-' }}</td>
+                                            <td class="px-4 py-3">{{ $evaluation->evaluation_date ? $evaluation->evaluation_date->translatedFormat('d F Y') : '-' }}</td>
+                                            <td class="px-4 py-3">
+                                                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold" style="background: linear-gradient(90deg, rgb(239,68,68) 0%, rgb(250,204,21) 50%, rgb(34,197,94) 100%); color: white;">
+                                                    {{ $score }}
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-bold {{ $scoreColor }}">{{ $scoreGrade }}</span>
+                                            </td>
+                                            <td class="px-4 py-3 max-w-xs break-words">{{ $evaluation->notes ?: '-' }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                            Belum ada data evaluasi untuk ekstrakurikuler yang dibina.
+                        </div>
+                    @endif
                 </div>
             </div>
 
@@ -549,8 +829,10 @@
             const tabs = {
                 dashboard: document.getElementById('tab-dashboard'),
                 anggota: document.getElementById('tab-anggota'),
+                ekskul: document.getElementById('tab-ekskul'),
                 jadwal: document.getElementById('tab-jadwal'),
                 kehadiran: document.getElementById('tab-kehadiran'),
+                nilai: document.getElementById('tab-nilai'),
                 profile: document.getElementById('tab-profile'),
                 settings: document.getElementById('tab-settings'),
             };
@@ -585,6 +867,44 @@
                 element.addEventListener('click', function () {
                     activateTab('profile');
                 });
+            });
+
+            const evaluationModal = document.getElementById('evaluation-modal');
+            const evaluationForm = document.getElementById('evaluation-form');
+            const closeEvaluationModal = document.getElementById('close-evaluation-modal');
+            const cancelEvaluationModal = document.getElementById('cancel-evaluation-modal');
+
+            document.querySelectorAll('.open-evaluation-modal').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const evaluationId = button.dataset.evaluationId;
+                    const studentName = button.dataset.userName;
+                    const ekskulTitle = button.dataset.ekskulTitle;
+                    const score = button.dataset.score;
+                    const date = button.dataset.date;
+                    const notes = button.dataset.notes;
+
+                    document.getElementById('modal-student-name').value = studentName;
+                    document.getElementById('modal-ekskul-title').value = ekskulTitle;
+                    document.getElementById('modal-score').value = score;
+                    document.getElementById('modal-date').value = date;
+                    document.getElementById('modal-notes').value = notes;
+
+                    evaluationForm.action = `{{ url('/guru/evaluation') }}/${evaluationId}`;
+                    evaluationModal.classList.remove('hidden');
+                });
+            });
+
+            function hideEvaluationModal() {
+                evaluationModal.classList.add('hidden');
+                evaluationForm.reset();
+            }
+
+            closeEvaluationModal.addEventListener('click', hideEvaluationModal);
+            cancelEvaluationModal.addEventListener('click', hideEvaluationModal);
+            evaluationModal.addEventListener('click', function (event) {
+                if (event.target === evaluationModal) {
+                    hideEvaluationModal();
+                }
             });
 
             const initialTab = window.location.hash.replace('#', '') || 'dashboard';
