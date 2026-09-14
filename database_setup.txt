@@ -1,19 +1,40 @@
 EskulManager Database Setup
 ==========================
 
-Database name from .env:
+This project is configured to use Laravel migrations rather than a custom manual SQL schema. The recommended setup is:
+
+1. Create the database in MySQL
+2. Run the Laravel migrations
+3. Optionally populate the database with a custom seeder after the tables exist
+
+Database settings from .env:
 - DB_CONNECTION=mysql
 - DB_DATABASE=laravel
 - DB_USERNAME=root
 - DB_PASSWORD=
 
-MySQL commands to create the database:
+Create the database:
 
 CREATE DATABASE laravel CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE laravel;
 
-Tables:
+Then run the app migrations:
 
+php artisan migrate
+
+If you want to run the default seeder command as well:
+
+php artisan db:seed
+
+Important note:
+- The current DatabaseSeeder only clears the data in attendance_records, registrations, and ekskuls.
+- It does not insert sample extracurricular data.
+- The app is meant to be populated through application logic or custom seeders, not by the default DB seeder alone.
+
+Current migration-based schema
+------------------------------
+
+users
 CREATE TABLE users (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
@@ -21,6 +42,10 @@ CREATE TABLE users (
     email_verified_at TIMESTAMP NULL DEFAULT NULL,
     password VARCHAR(255) NOT NULL,
     role ENUM('admin', 'guru', 'siswa') NOT NULL DEFAULT 'siswa',
+    avatar_path VARCHAR(255) NULL DEFAULT NULL,
+    class_name VARCHAR(255) NULL DEFAULT NULL,
+    phone VARCHAR(255) NULL DEFAULT NULL,
+    bio TEXT NULL DEFAULT NULL,
     remember_token VARCHAR(100) NULL DEFAULT NULL,
     created_at TIMESTAMP NULL DEFAULT NULL,
     updated_at TIMESTAMP NULL DEFAULT NULL,
@@ -28,6 +53,7 @@ CREATE TABLE users (
     UNIQUE KEY users_email_unique (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+ekskuls
 CREATE TABLE ekskuls (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
@@ -40,6 +66,7 @@ CREATE TABLE ekskuls (
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+registrations
 CREATE TABLE registrations (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     user_id BIGINT UNSIGNED NOT NULL,
@@ -54,6 +81,48 @@ CREATE TABLE registrations (
     CONSTRAINT registrations_ekskul_id_foreign FOREIGN KEY (ekskul_id) REFERENCES ekskuls (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+attendance_records
+CREATE TABLE attendance_records (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    registration_id BIGINT UNSIGNED NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    ekskul_id BIGINT UNSIGNED NOT NULL,
+    attendance_date DATE NOT NULL,
+    status ENUM('hadir', 'sakit_izin', 'tidak_hadir') NOT NULL,
+    proof TEXT NULL DEFAULT NULL,
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY attendance_records_registration_id_attendance_date_unique (registration_id, attendance_date),
+    KEY attendance_records_registration_id_foreign (registration_id),
+    KEY attendance_records_user_id_foreign (user_id),
+    KEY attendance_records_ekskul_id_foreign (ekskul_id),
+    CONSTRAINT attendance_records_registration_id_foreign FOREIGN KEY (registration_id) REFERENCES registrations (id) ON DELETE CASCADE,
+    CONSTRAINT attendance_records_user_id_foreign FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT attendance_records_ekskul_id_foreign FOREIGN KEY (ekskul_id) REFERENCES ekskuls (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ekskul_evaluations
+CREATE TABLE ekskul_evaluations (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    registration_id BIGINT UNSIGNED NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    ekskul_id BIGINT UNSIGNED NOT NULL,
+    score TINYINT UNSIGNED NULL DEFAULT NULL,
+    notes TEXT NULL DEFAULT NULL,
+    evaluation_date DATE NULL DEFAULT NULL,
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (id),
+    KEY ekskul_evaluations_registration_id_foreign (registration_id),
+    KEY ekskul_evaluations_user_id_foreign (user_id),
+    KEY ekskul_evaluations_ekskul_id_foreign (ekskul_id),
+    CONSTRAINT ekskul_evaluations_registration_id_foreign FOREIGN KEY (registration_id) REFERENCES registrations (id) ON DELETE CASCADE,
+    CONSTRAINT ekskul_evaluations_user_id_foreign FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    CONSTRAINT ekskul_evaluations_ekskul_id_foreign FOREIGN KEY (ekskul_id) REFERENCES ekskuls (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+extracurriculars
 CREATE TABLE extracurriculars (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     nama VARCHAR(255) NOT NULL,
@@ -63,30 +132,15 @@ CREATE TABLE extracurriculars (
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-Seed data for ekskuls (from DatabaseSeeder.php):
-
-
-Note: Futsal image link broken
-INSERT INTO ekskuls (title, category, coach, description, image, created_at, updated_at) VALUES
-('Futsal', 'Olahraga', 'Coach Nur Cahyana', 'Mengasah taktik, kerja sama tim, fisik prima, dan sportivitas tinggi melalui futsal.', 'https://images.unsplash.com/photo-1536122985607-4fea00713805?w=800&q=80', NOW(), NOW()),
-('Basketball', 'Olahraga', 'Coach Nur Cahyana', 'Kembangkan akurasi tembakan dan daya tahan fisik bersama tim basket andalan sekolah.', 'https://images.unsplash.com/photo-1519861531473-9200262188bf?w=800&q=80', NOW(), NOW()),
-('Programming', 'Teknologi', 'Pak Dede Dwinarantika', 'Belajar coding, pembuatan web, web design, aplikasi mobile, hingga persiapan LKS SMK bidang IT.', 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80', NOW(), NOW()),
-('Paduan Suara', 'Seni & Kreatif', 'Tim Kesenian', 'Mengembangkan kemampuan vokal, kerja sama tim, disiplin, dan percaya diri melalui latihan serta penampilan.', 'https://images.unsplash.com/photo-1551009175-8a68da93d5f9?w=800&q=80', NOW(), NOW()),
-('Marching Band', 'Seni & Musik', 'Bu Nenikormala', 'Latihan musikalitas instrumen tiup dan perkusi dikombinasikan dengan koreografi baris berbaris.', 'https://images.unsplash.com/photo-1573676047242-eb4871d87e07?w=800&q=80', NOW(), NOW()),
-('Paskibra', 'Kepemimpinan', 'Pak Yogarosmant', 'Pembentukan disiplin, karakter tangguh, kesolidan tim, serta persiapan upacara hari besar nasional.', 'https://images.unsplash.com/photo-1532375810709-75b1da00537c?w=800&q=80', NOW(), NOW()),
-('Pramuka', 'Kepemimpinan', 'Pak Itisar', 'Pendidikan kepanduan mandiri, survival alam, tali temali, pembentukan kepemimpinan tanggap.', 'https://images.unsplash.com/photo-1508933221946-b6bafdf6ffbe?w=800&q=80', NOW(), NOW()),
-('PMR (Palang Merah Remaja)', 'Kemanusiaan', 'Pak Elpan', 'Latihan dasar pertolongan pertama, simulasi tanggap bencana, dan kepedulian sosial terhadap kesehatan.', 'https://images.unsplash.com/photo-1584515933487-779824d29309?w=800&q=80', NOW(), NOW());
-
-Sample user insert (optional if you want a default admin):
-
-INSERT INTO users (name, email, password, role, created_at, updated_at) VALUES
-('Admin User', 'admin@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', NOW(), NOW());
-
-Alternative Laravel command:
-php artisan migrate --seed
-
 Notes:
 - This project uses MySQL by default.
-- The .env file is configured for database name 'laravel'.
-- The file app/Models/User.php allows the role field: admin, guru, siswa.
-- The table registrations connects users to ekskuls with status 'aktif' or 'pending'.
+- The .env file is configured for the database name laravel.
+- The role field accepts: admin, guru, siswa.
+- The registrations table links users to ekskuls with status values: aktif or pending.
+- The attendance_records table uses attendance_date plus status values: hadir, sakit_izin, tidak_hadir.
+- The old SQL dump with seed data is no longer the canonical source of truth; Laravel migrations are.
+
+Useful commands:
+php artisan migrate
+php artisan migrate:fresh
+php artisan migrate:fresh --seed
