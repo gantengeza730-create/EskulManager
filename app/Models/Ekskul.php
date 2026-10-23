@@ -2,28 +2,34 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Ekskul extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'title',
-        'category',
-        'coach',
-        'description',
-        'image',
+        'name', 'category', 'description', 'requirements', 'location',
+        'schedule_text', 'quota', 'color', 'pembina_id', 'is_active',
     ];
 
-    public function registrations()
+    protected $casts = ['is_active' => 'boolean'];
+
+    public function pembina()       { return $this->belongsTo(User::class, 'pembina_id'); }
+    public function registrations() { return $this->hasMany(Registration::class); }
+    public function schedules()     { return $this->hasMany(Schedule::class); }
+    public function assessments()   { return $this->hasMany(Assessment::class); }
+
+    public function members()
     {
-        return $this->hasMany(Registration::class);
+        return $this->belongsToMany(User::class, 'registrations')->wherePivot('status', 'accepted');
     }
 
-    public function evaluations()
+    public function memberCount(): int
     {
-        return $this->hasMany(EkskulEvaluation::class);
+        return $this->registrations()->where('status', 'accepted')->count();
+    }
+
+    public function requirementList(): array
+    {
+        return array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', (string) $this->requirements))));
     }
 }
