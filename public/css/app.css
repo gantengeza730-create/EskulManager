@@ -44,6 +44,13 @@ table{width:100%;border-collapse:collapse}th{text-align:left;font-size:11.5px;co
 .kv{display:flex;flex-direction:column;gap:12px}.kv div{display:flex;justify-content:space-between;gap:12px;font-size:13px}.kv span:first-child{color:var(--muted)}.kv span:last-child{font-weight:700;text-align:right}
 .pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.pill{padding:7px 13px;border-radius:20px;font-size:12.5px;font-weight:700;border:1px solid var(--border);background:var(--surface);color:var(--muted)}.pill.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .muted{color:var(--muted)}.small{font-size:12px}.faint{color:var(--faint)}.nm{font-weight:700}.right{text-align:right}.mt{margin-top:16px}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;border:1px solid var(--border);border-radius:14px;background:var(--surface);box-shadow:var(--shadow)}
+.pager-info{font-size:12px;color:var(--muted);font-weight:600}
+.pager-links{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+.pager .pg{min-width:38px;transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease}
+.pager .pg:hover:not(.off){transform:translateY(-1px)}
+.pager .pg.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 8px 18px -12px rgba(37,99,235,.8)}
+.pager .pg.off{background:var(--surface-2);color:var(--muted);cursor:default;border-color:var(--border)}
 .ekgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.ek{border:1px solid var(--border);border-radius:14px;padding:16px;background:var(--surface);display:flex;flex-direction:column;gap:8px}.ek h4{font-size:14.5px;font-weight:800}.ek .dot{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff}
 .li{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}.li:last-child{border-bottom:0}.li .d{width:46px;height:46px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;font-size:14px;line-height:1}.li .d small{font-size:9.5px;color:var(--faint);text-transform:uppercase}
 .ann{border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;background:var(--surface)}.ann h4{font-size:14px;font-weight:800}.ann p{margin:8px 0 0;font-size:13px;color:var(--muted);line-height:1.6}

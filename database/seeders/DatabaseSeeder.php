@@ -9,6 +9,10 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        if (User::where('email', 'admin@sekolah.test')->exists()) {
+            return;
+        }
+
         $now = now();
         $mk = fn ($name, $email, $role, $extra = []) => User::create([
             'name' => $name, 'email' => $email, 'role' => $role, 'password' => 'password',

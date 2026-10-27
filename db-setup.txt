@@ -1,0 +1,56 @@
+EskulManager Database Setup Guide
+
+1. Install and start a database server
+   - Recommended: MySQL 8 or MariaDB
+   - Create a database named: ekskulmanager
+   - Create a database user with access to that database
+
+2. Copy the environment example
+   - In the project root, copy .env.example to .env
+   - Example:
+     cp .env.example .env
+
+3. Configure database credentials in .env
+   Update these values in your .env file:
+
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=ekskulmanager
+   DB_USERNAME=your_db_user
+   DB_PASSWORD=your_db_password
+
+   If you are using a different database type, adjust DB_CONNECTION accordingly.
+
+4. Run database migrations
+   From the project root:
+   php artisan migrate
+
+5. Optionally seed the database
+   If the app includes seeders:
+   php artisan db:seed
+
+6. Verify the setup
+   You can test the database connection with:
+   php artisan db:show
+
+   Or run:
+   php artisan tinker
+   DB::connection()->getPdo();
+
+7. Common issues
+   - If you get a connection error, check the username, password, host, and database name.
+   - Make sure the MySQL/MariaDB service is running.
+   - Ensure the database user has permission to the ekskulmanager database.
+   - If Laravel cannot read the .env file, verify that it exists and is correctly named.
+
+8. Example MySQL commands
+   CREATE DATABASE ekskulmanager;
+   CREATE USER 'your_db_user'@'localhost' IDENTIFIED BY 'your_db_password';
+   GRANT ALL PRIVILEGES ON ekskulmanager.* TO 'your_db_user'@'localhost';
+   FLUSH PRIVILEGES;
+
+Notes:
+- If you are using XAMPP, WAMP, or a local MySQL package, use 127.0.0.1 or localhost as DB_HOST.
+- If you are using SQLite, set DB_CONNECTION=sqlite and point DB_DATABASE to a writable file.
+- For production, use strong credentials and do not commit .env to version control.
