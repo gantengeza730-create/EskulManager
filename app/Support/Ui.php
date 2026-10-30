@@ -21,9 +21,9 @@ class Ui
         return '<span class="b ' . ($map[$s] ?? 'b-info') . '">' . e($label) . '</span>';
     }
 
-    public static function fixedBadge(bool $fixed): string
+    public static function fixedBadge(?bool $fixed): string
     {
-        return $fixed ? '<span class="b b-pur">Jadwal Tetap</span>' : '';
+        return $fixed === true ? '<span class="b b-pur">Jadwal Tetap</span>' : '';
     }
 
     public static function bigBadge(bool $big): string
