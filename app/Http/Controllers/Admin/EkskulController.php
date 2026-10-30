@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Ekskul;
 use App\Models\User;
+use App\Support\Notifier;
 use Illuminate\Http\Request;
 
 class EkskulController extends Controller
@@ -12,17 +13,28 @@ class EkskulController extends Controller
     public function index()
     {
         $items = Ekskul::with('pembina')->withCount(['registrations as members_count' => fn ($q) => $q->where('status', 'accepted')])->orderByDesc('members_count')->orderBy('name')->get();
+
         return view('admin.ekskul-index', compact('items'));
     }
 
     public function create()
     {
-        return view('admin.ekskul-form', ['ekskul' => new Ekskul(['color' => '#2563EB', 'quota' => 40, 'is_active' => true]), 'pembinas' => $this->pembinas()]);
+        return view('admin.ekskul-form', ['ekskul' => new Ekskul(['color' => '#2563EB', 'quota' => 40, 'is_active' => true, 'is_big' => false]), 'pembinas' => $this->pembinas()]);
     }
 
     public function store(Request $request)
     {
-        Ekskul::create($this->validated($request));
+        $ekskul = Ekskul::create($this->validated($request));
+
+        if ($ekskul->is_big && $ekskul->pembina) {
+            Notifier::send(
+                $ekskul->pembina,
+                'Ekskul besar',
+                'Selamat, Ekskul kamu menjadi Ekskul besar.',
+                route('pembina.dashboard')
+            );
+        }
+
         return redirect()->route('admin.ekskul.index')->with('success', 'Ekskul baru berhasil ditambahkan.');
     }
 
@@ -33,17 +45,36 @@ class EkskulController extends Controller
 
     public function update(Request $request, Ekskul $ekskul)
     {
+        $wasBig = (bool) $ekskul->is_big;
+        $previousPembinaId = $ekskul->pembina_id;
         $ekskul->update($this->validated($request));
+
+        $nowBig = (bool) $ekskul->is_big;
+        $pembinaChanged = $previousPembinaId !== $ekskul->pembina_id;
+
+        if ($nowBig && $ekskul->pembina && (! $wasBig || $pembinaChanged)) {
+            Notifier::send(
+                $ekskul->pembina,
+                'Ekskul besar',
+                'Selamat, Ekskul kamu menjadi Ekskul besar.',
+                route('pembina.dashboard')
+            );
+        }
+
         return redirect()->route('admin.ekskul.index')->with('success', 'Data ekskul diperbarui.');
     }
 
     public function destroy(Ekskul $ekskul)
     {
         $ekskul->delete();
+
         return redirect()->route('admin.ekskul.index')->with('success', 'Ekskul dihapus beserta data terkait.');
     }
 
-    private function pembinas() { return User::where('role', 'pembina')->orderBy('name')->get(); }
+    private function pembinas()
+    {
+        return User::where('role', 'pembina')->orderBy('name')->get();
+    }
 
     private function validated(Request $request): array
     {
@@ -57,8 +88,11 @@ class EkskulController extends Controller
             'quota' => 'required|integer|min:1|max:500',
             'color' => 'required|regex:/^#[0-9A-Fa-f]{6}$/',
             'pembina_id' => 'required|exists:users,id',
+            'is_big' => 'nullable|boolean',
         ]);
         $data['is_active'] = $request->boolean('is_active');
+        $data['is_big'] = $request->boolean('is_big');
+
         return $data;
     }
 }
