@@ -6,8 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Assessment extends Model
 {
-    protected $fillable = ['ekskul_id', 'user_id', 'technique', 'discipline', 'teamwork', 'attitude', 'notes', 'assessed_by'];
-
+    protected $fillable = ['ekskul_id','user_id','technique','discipline','teamwork','attitude','notes','assessed_by'];
     public function ekskul() { return $this->belongsTo(Ekskul::class); }
     public function user()   { return $this->belongsTo(User::class); }
 

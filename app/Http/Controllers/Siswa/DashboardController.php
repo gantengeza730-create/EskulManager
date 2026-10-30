@@ -12,22 +12,17 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
         $ids = $user->scopedEkskulIds();
-
         $att = $user->attendances()->get();
-        $attPct = $att->count() ? round($att->where('status', 'hadir')->count() / $att->count() * 100) : null;
         $assessments = $user->assessments()->get();
-        $avg = $assessments->count() ? round($assessments->avg(fn ($a) => $a->average())) : null;
-
         return view('siswa.dashboard', [
             'joined' => $user->joinedEkskuls()->with('pembina')->get(),
             'pending' => $user->registrations()->where('status', 'pending')->with('ekskul')->get(),
-            'attPct' => $attPct,
-            'avg' => $avg,
+            'attPct' => $att->count() ? round($att->where('status', 'hadir')->count() / $att->count() * 100) : null,
+            'avg' => $assessments->count() ? round($assessments->avg(fn ($a) => $a->average())) : null,
             'certCount' => $user->certificates()->count(),
-            'upcoming' => Schedule::with(['ekskul', 'room'])->whereIn('ekskul_id', $ids)
-                ->whereDate('date', '>=', today())->orderBy('date')->orderBy('start_time')->take(4)->get(),
-            'announcements' => Announcement::with('ekskul')
-                ->where(fn ($q) => $q->whereNull('ekskul_id')->orWhereIn('ekskul_id', $ids))
+            'upcoming' => Schedule::with(['ekskul', 'room'])->whereIn('ekskul_id', $ids)->whereDate('date', '>=', today())->orderBy('date')->orderBy('start_time')->take(4)->get(),
+            'announcements' => Announcement::with(['ekskul', 'targets'])
+                ->where(fn ($q) => $q->where('type', 'berita')->orWhere(fn ($p) => $p->where('type', 'pengumuman')->where(fn ($v) => $v->where('is_all', true)->orWhereHas('targets', fn ($t) => $t->whereIn('ekskuls.id', $ids)))))
                 ->latest()->take(3)->get(),
         ]);
     }

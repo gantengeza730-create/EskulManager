@@ -12,26 +12,27 @@ class LandingController extends Controller
 {
     public function home()
     {
+        $ekskuls = Ekskul::where('is_active', true)->with('pembina')
+            ->withCount(['registrations as members_count' => fn ($q) => $q->where('status', 'accepted')])
+            ->orderBy('name')->get();
         return view('landing', [
-            'ekskuls' => Ekskul::where('is_active', true)->with('pembina')->get(),
+            'ekskuls' => $ekskuls,
             'stats' => [
-                'ekskul' => Ekskul::where('is_active', true)->count(),
+                'ekskul' => $ekskuls->count(),
                 'siswa' => Registration::where('status', 'accepted')->distinct('user_id')->count('user_id'),
                 'pembina' => User::where('role', 'pembina')->count(),
             ],
-            'berita' => Announcement::where('type', 'berita')->latest()->take(3)->get(),
-            'galeri' => Gallery::latest()->take(4)->get(),
+            'berita' => Announcement::with('ekskul')->where('type', 'berita')->latest()->take(9)->get(),
+            'galeri' => Gallery::with('ekskul')->latest()->take(8)->get(),
         ]);
     }
 
-    /** Halaman detail ekskul: Info, Syarat, Anggota. */
     public function show(Ekskul $ekskul)
     {
         $ekskul->load('pembina');
         $members = auth()->check() ? $ekskul->members()->orderBy('name')->get() : collect();
         $myReg = auth()->check() && auth()->user()->isSiswa()
-            ? Registration::where('user_id', auth()->id())->where('ekskul_id', $ekskul->id)->first()
-            : null;
+            ? Registration::where('user_id', auth()->id())->where('ekskul_id', $ekskul->id)->first() : null;
         return view('ekskul.show', compact('ekskul', 'members', 'myReg'));
     }
 }

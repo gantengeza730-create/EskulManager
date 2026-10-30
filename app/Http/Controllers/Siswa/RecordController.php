@@ -4,19 +4,13 @@ namespace App\Http\Controllers\Siswa;
 
 use App\Http\Controllers\Controller;
 
-/** Riwayat presensi, nilai, dan sertifikat milik siswa yang login. */
 class RecordController extends Controller
 {
     public function attendance()
     {
-        $rows = auth()->user()->attendances()->with('schedule.ekskul')->get()
-            ->sortByDesc(fn ($a) => $a->schedule->date);
-        $summary = [
-            'hadir' => $rows->where('status', 'hadir')->count(),
-            'izin' => $rows->where('status', 'izin')->count(),
-            'sakit' => $rows->where('status', 'sakit')->count(),
-            'alpha' => $rows->where('status', 'alpha')->count(),
-        ];
+        $rows = auth()->user()->attendances()->with('schedule.ekskul')->get()->sortByDesc(fn ($a) => $a->schedule->date);
+        $summary = [];
+        foreach (['hadir', 'izin', 'sakit', 'alpha'] as $s) $summary[$s] = $rows->where('status', $s)->count();
         $pct = $rows->count() ? round($summary['hadir'] / $rows->count() * 100) : null;
         return view('siswa.presensi', compact('rows', 'summary', 'pct'));
     }

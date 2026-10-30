@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Announcement;
 use App\Models\Attendance;
 use App\Models\Certificate;
 use App\Models\Ekskul;
@@ -14,9 +15,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $popularity = Ekskul::withCount(['registrations as members_count' => fn ($q) => $q->where('status', 'accepted')])
-            ->orderByDesc('members_count')->take(6)->get();
-
+        $popularity = Ekskul::withCount(['registrations as members_count' => fn ($q) => $q->where('status', 'accepted')])->orderByDesc('members_count')->take(6)->get();
         $att = Attendance::count();
         return view('admin.dashboard', [
             'stats' => [
@@ -29,8 +28,10 @@ class DashboardController extends Controller
             'popularity' => $popularity,
             'maxMembers' => max(1, $popularity->max('members_count')),
             'recent' => Registration::with(['user', 'ekskul'])->latest()->take(6)->get(),
-            'upcoming' => Schedule::with(['ekskul', 'room'])->whereDate('date', '>=', today())
-                ->orderBy('date')->orderBy('start_time')->take(5)->get(),
+            'upcoming' => Schedule::with(['ekskul', 'room'])->whereDate('date', '>=', today())->orderBy('date')->orderBy('start_time')->take(5)->get(),
+            // berita & pengumuman tampil di dashboard admin
+            'news' => Announcement::with(['ekskul'])->where('type', 'berita')->latest()->take(4)->get(),
+            'notices' => Announcement::with(['targets'])->where('type', 'pengumuman')->latest()->take(4)->get(),
         ]);
     }
 }

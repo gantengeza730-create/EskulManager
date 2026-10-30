@@ -6,11 +6,13 @@ use App\Models\Announcement;
 use App\Models\Certificate;
 use App\Models\Ekskul;
 use App\Models\Gallery;
+use App\Models\Registration;
 use App\Models\Schedule;
 use App\Models\User;
 use App\Support\Notifier;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 /** Fitur yang dipakai bersama oleh admin, pembina, dan siswa. */
@@ -43,18 +45,15 @@ class SharedController extends Controller
     }
 
     /* ----- Profil ----- */
-    public function profile()
-    {
-        return view('shared.profil', ['user' => auth()->user()]);
-    }
+    public function profile() { return view('shared.profil', ['user' => auth()->user()]); }
 
     public function updateProfile(Request $request)
     {
         $user = auth()->user();
         $data = $request->validate([
             'name' => 'required|string|max:100',
-            'phone' => 'nullable|string|max:20',
-            'kelas' => 'nullable|string|max:30',
+            'phone' => 'required|string|max:20',
+            'kelas' => $user->isSiswa() ? 'required|string|max:30' : 'nullable',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
         if (empty($data['password'])) unset($data['password']);
@@ -64,16 +63,13 @@ class SharedController extends Controller
     }
 
     /* ----- Jadwal (admin memakai halaman CRUD sendiri) ----- */
-    public function schedules(Request $request)
+    public function schedules()
     {
         $user = auth()->user();
         if ($user->isAdmin()) return redirect()->route('admin.jadwal.index');
-
         $ids = $user->scopedEkskulIds();
-        $upcoming = Schedule::with(['ekskul', 'room'])->whereIn('ekskul_id', $ids)
-            ->whereDate('date', '>=', today())->orderBy('date')->orderBy('start_time')->get();
-        $past = Schedule::with(['ekskul', 'room'])->whereIn('ekskul_id', $ids)
-            ->whereDate('date', '<', today())->orderByDesc('date')->take(10)->get();
+        $upcoming = Schedule::with(['ekskul', 'room'])->whereIn('ekskul_id', $ids)->whereDate('date', '>=', today())->orderBy('date')->orderBy('start_time')->take(30)->get();
+        $past = Schedule::with(['ekskul', 'room'])->whereIn('ekskul_id', $ids)->whereDate('date', '<', today())->orderByDesc('date')->take(10)->get();
         return view('shared.jadwal', compact('upcoming', 'past'));
     }
 
@@ -81,56 +77,87 @@ class SharedController extends Controller
     public function calendar(Request $request)
     {
         $user = auth()->user();
-        $month = $request->query('bulan');
-        try { $cursor = Carbon::createFromFormat('Y-m', $month)->startOfMonth(); }
+        try { $cursor = Carbon::createFromFormat('Y-m', (string) $request->query('bulan'))->startOfMonth(); }
         catch (\Throwable $e) { $cursor = now()->startOfMonth(); }
-
-        $events = Schedule::with('ekskul')->whereIn('ekskul_id', $user->scopedEkskulIds())
+        $ids = $user->scopedEkskulIds();
+        $events = Schedule::with('ekskul')->whereIn('ekskul_id', $ids)
             ->whereBetween('date', [$cursor->copy()->startOfMonth(), $cursor->copy()->endOfMonth()])
             ->orderBy('start_time')->get()->groupBy(fn ($s) => $s->date->format('Y-m-d'));
-
-        $offset = ($cursor->dayOfWeekIso - 1);
-        $legend = Ekskul::whereIn('id', $user->scopedEkskulIds())->get(['id', 'name', 'color']);
         return view('shared.kalender', [
-            'cursor' => $cursor, 'events' => $events, 'offset' => $offset, 'legend' => $legend,
+            'cursor' => $cursor, 'events' => $events, 'offset' => $cursor->dayOfWeekIso - 1,
+            'legend' => Ekskul::whereIn('id', $ids)->get(['id', 'name', 'color']),
             'prev' => $cursor->copy()->subMonth()->format('Y-m'), 'next' => $cursor->copy()->addMonth()->format('Y-m'),
         ]);
     }
 
     /* ----- Pengumuman & Berita ----- */
-    public function announcements()
+    public function announcements(Request $request)
     {
         $user = auth()->user();
         $ids = $user->scopedEkskulIds();
-        $items = Announcement::with(['author', 'ekskul'])
-            ->where(function ($q) use ($ids, $user) {
-                $q->whereNull('ekskul_id')->orWhereIn('ekskul_id', $ids);
-                if ($user->isPembina() || $user->isAdmin()) $q->orWhere('user_id', $user->id);
-            })->latest()->paginate(10);
-        $ekskuls = $user->isAdmin() ? Ekskul::orderBy('name')->get() : ($user->isPembina() ? $user->ekskulsBina : collect());
-        return view('shared.pengumuman', compact('items', 'ekskuls'));
+        $q = Announcement::with(['author', 'ekskul', 'targets']);
+
+        if (!$user->isAdmin()) {
+            $q->where(function ($w) use ($ids, $user) {
+                $w->where('type', 'berita')->orWhere(function ($p) use ($ids, $user) {
+                    $p->where('type', 'pengumuman')->where(function ($v) use ($ids, $user) {
+                        $v->where('is_all', true)
+                          ->orWhereHas('targets', fn ($t) => $t->whereIn('ekskuls.id', $ids))
+                          ->orWhere('user_id', $user->id);
+                    });
+                });
+            });
+        }
+
+        $type = $request->query('jenis');
+        $about = $request->query('tentang');
+        if (in_array($type, ['pengumuman', 'berita'], true)) $q->where('type', $type);
+        if ($about === 'sekolah') {
+            $q->where(fn ($w) => $w->where(fn ($x) => $x->where('type', 'berita')->whereNull('ekskul_id'))
+                                   ->orWhere(fn ($x) => $x->where('type', 'pengumuman')->where('is_all', true)));
+        } elseif ($about) {
+            $q->where(fn ($w) => $w->where(fn ($x) => $x->where('type', 'berita')->where('ekskul_id', $about))
+                                   ->orWhere(fn ($x) => $x->where('type', 'pengumuman')->whereHas('targets', fn ($t) => $t->where('ekskuls.id', $about))));
+        }
+
+        $items = $q->latest()->paginate(10)->withQueryString();
+        $ekskuls = $user->isAdmin() ? Ekskul::orderBy('name')->get() : ($user->isPembina() ? $user->ekskulsBina()->orderBy('name')->get() : collect());
+        $topics = Ekskul::whereIn('id', $ids)->orderBy('name')->get(['id', 'name']);
+        return view('shared.pengumuman', compact('items', 'ekskuls', 'topics', 'type', 'about'));
     }
 
     public function storeAnnouncement(Request $request)
     {
         $user = auth()->user();
-        $data = $request->validate([
-            'title' => 'required|string|max:150',
-            'body' => 'required|string',
-            'type' => 'required|in:pengumuman,berita',
-            'ekskul_id' => ($user->isPembina() ? 'required' : 'nullable') . '|exists:ekskuls,id',
+        $type = $request->input('type');
+        $rules = ['type' => 'required|in:pengumuman,berita', 'title' => 'required|string|max:150', 'body' => 'required|string'];
+        if ($type === 'berita') $rules['about'] = 'required';
+        else { $rules['targets'] = 'required|array|min:1'; $rules['targets.*'] = 'required'; }
+        $data = $request->validate($rules, [
+            'targets.required' => 'Pilih minimal satu tujuan pengumuman.',
+            'targets.min' => 'Pilih minimal satu tujuan pengumuman.',
+            'about.required' => 'Pilih topik berita (Sekolah atau ekskul).',
         ]);
-        if ($user->isPembina() && !in_array((int) $data['ekskul_id'], $user->scopedEkskulIds(), true)) abort(403);
+        $own = $user->scopedEkskulIds();
+        $allSiswa = fn () => User::where('role', 'siswa')->where('is_active', true)->get();
 
-        $a = Announcement::create($data + ['user_id' => $user->id]);
-
-        // Kirim notifikasi ke penerima
-        $recipients = $a->ekskul_id
-            ? Ekskul::find($a->ekskul_id)->members
-            : User::where('role', 'siswa')->where('is_active', true)->get();
-        Notifier::send($recipients->reject(fn ($r) => $r->id === $user->id), ucfirst($a->type) . ' baru: ' . $a->title,
-            \Str::limit($a->body, 90), route('pengumuman.index'));
-
+        if ($type === 'berita') {
+            $ekId = $data['about'] === 'sekolah' ? null : (int) $data['about'];
+            if ($ekId === null && !$user->isAdmin()) abort(403);
+            if ($ekId !== null && !in_array($ekId, $own, true)) abort(403);
+            $a = Announcement::create(['user_id' => $user->id, 'type' => 'berita', 'title' => $data['title'], 'body' => $data['body'], 'ekskul_id' => $ekId, 'is_all' => true]);
+            $recipients = $ekId ? Ekskul::find($ekId)->members : $allSiswa();
+        } else {
+            $isAll = in_array('all', $data['targets'], true);
+            if ($isAll && !$user->isAdmin()) abort(403);
+            $ids = $isAll ? [] : array_map('intval', array_filter($data['targets'], fn ($t) => $t !== 'all'));
+            foreach ($ids as $i) if (!in_array($i, $own, true)) abort(403);
+            $a = Announcement::create(['user_id' => $user->id, 'type' => 'pengumuman', 'title' => $data['title'], 'body' => $data['body'], 'ekskul_id' => null, 'is_all' => $isAll]);
+            $a->targets()->sync($ids);
+            $recipients = $isAll ? $allSiswa()
+                : User::whereIn('id', Registration::whereIn('ekskul_id', $ids)->where('status', 'accepted')->pluck('user_id'))->get();
+        }
+        Notifier::send($recipients->reject(fn ($r) => $r->id === $user->id), ucfirst($a->type) . ' baru: ' . $a->title, Str::limit($a->body, 90), route('pengumuman.index'));
         return back()->with('success', ucfirst($a->type) . ' berhasil diterbitkan.');
     }
 
@@ -141,16 +168,20 @@ class SharedController extends Controller
         return back()->with('success', 'Data dihapus.');
     }
 
-    /* ----- Galeri ----- */
-    public function gallery()
+    /* ----- Galeri / Dokumentasi ----- */
+    public function gallery(Request $request)
     {
         $user = auth()->user();
         $ids = $user->scopedEkskulIds();
-        $items = Gallery::with(['ekskul', 'uploader'])
-            ->where(fn ($q) => $q->whereNull('ekskul_id')->orWhereIn('ekskul_id', $ids))
-            ->latest()->paginate(12);
-        $ekskuls = $user->isAdmin() ? Ekskul::orderBy('name')->get() : ($user->isPembina() ? $user->ekskulsBina : collect());
-        return view('shared.galeri', compact('items', 'ekskuls'));
+        $about = $request->query('tentang');
+        $q = Gallery::with(['ekskul', 'uploader']);
+        if (!$user->isAdmin()) $q->where(fn ($w) => $w->whereNull('ekskul_id')->orWhereIn('ekskul_id', $ids));
+        if ($about === 'sekolah') $q->whereNull('ekskul_id');
+        elseif ($about) $q->where('ekskul_id', $about);
+        $items = $q->latest()->paginate(12)->withQueryString();
+        $ekskuls = $user->isAdmin() ? Ekskul::orderBy('name')->get() : ($user->isPembina() ? $user->ekskulsBina()->orderBy('name')->get() : collect());
+        $topics = Ekskul::whereIn('id', $ids)->orderBy('name')->get(['id', 'name']);
+        return view('shared.galeri', compact('items', 'ekskuls', 'topics', 'about'));
     }
 
     public function storeGallery(Request $request)
@@ -158,17 +189,15 @@ class SharedController extends Controller
         $user = auth()->user();
         $data = $request->validate([
             'title' => 'required|string|max:150',
-            'description' => 'nullable|string|max:500',
-            'ekskul_id' => ($user->isPembina() ? 'required' : 'nullable') . '|exists:ekskuls,id',
+            'description' => 'required|string|max:500',
+            'about' => 'required',
             'image' => 'required|image|max:4096',
-        ]);
-        if ($user->isPembina() && !in_array((int) $data['ekskul_id'], $user->scopedEkskulIds(), true)) abort(403);
-
+        ], ['about.required' => 'Pilih dokumentasi tentang apa (Sekolah atau ekskul).']);
+        $ekId = $data['about'] === 'sekolah' ? null : (int) $data['about'];
+        if ($ekId === null && !$user->isAdmin()) abort(403);
+        if ($ekId !== null && !in_array($ekId, $user->scopedEkskulIds(), true)) abort(403);
         Gallery::create([
-            'user_id' => $user->id,
-            'ekskul_id' => $data['ekskul_id'] ?? null,
-            'title' => $data['title'],
-            'description' => $data['description'] ?? null,
+            'user_id' => $user->id, 'ekskul_id' => $ekId, 'title' => $data['title'], 'description' => $data['description'],
             'image_path' => $request->file('image')->store('galeri', 'public'),
         ]);
         return back()->with('success', 'Foto dokumentasi berhasil diunggah.');

@@ -2,9 +2,13 @@
 @section('title', 'Laporan & Rekap')
 @section('subtitle', 'Rekap kegiatan dan presensi seluruh ekskul')
 @section('content')
-<div class="head"><div><h2>Laporan Kegiatan & Rekap Presensi</h2><p>Ringkasan untuk pelaporan ke sekolah.</p></div>
-    <div style="display:flex;gap:8px" class="no-print"><button class="btn btn-o" onclick="window.print()">🖨 Cetak</button><a class="btn btn-p" href="{{ route('admin.laporan.ekspor') }}">Unduh CSV (Excel)</a></div></div>
-<div class="card"><div class="tw"><table><thead><tr><th>Ekskul</th><th>Pembina</th><th>Anggota</th><th>Sesi Selesai</th><th>Catatan Presensi</th><th>Kehadiran</th></tr></thead><tbody>
-@foreach ($rows as $r)<tr><td class="nm">{{ $r['name'] }}</td><td>{{ $r['pembina'] }}</td><td>{{ $r['members'] }}</td><td>{{ $r['sessions'] }}</td><td>{{ $r['hadir'] }}/{{ $r['records'] }} hadir</td><td>{{ $r['pct'] !== null ? $r['pct'].'%' : '–' }}{!! \App\Support\Ui::bar($r['pct']) !!}</td></tr>@endforeach
-</tbody></table></div></div>
+@include('partials.print-header', ['title' => 'Laporan Kegiatan & Rekap Presensi Ekstrakurikuler', 'subtitle' => 'Periode ' . $label])
+<div class="no-print">
+<div class="head"><div><h2>Laporan Kegiatan & Rekap Presensi</h2><p>Lihat kehadiran dari 1 hari sampai 1 bulan, atau pilih tanggal sendiri.</p></div>
+    <div style="display:flex;gap:8px"><button class="btn btn-o" onclick="window.print()">🖨 Cetak</button><a class="btn btn-p" href="{{ route('admin.laporan.ekspor', request()->query()) }}">Unduh CSV (Excel)</a></div></div>
+@include('shared.filter-rentang', ['route' => 'admin.laporan', 'key' => $key, 'from' => $from, 'to' => $to])
+<p class="muted small">Periode: <b>{{ $label }}</b> · "Sesi berlangsung" hanya menghitung sesi yang sudah terjadi pada rentang ini, bukan seluruh jadwal tetap.</p></div>
+<div class="card"><div class="tw"><table><thead><tr><th>Ekskul</th><th>Pembina</th><th>Anggota</th><th>Sesi Berlangsung</th><th>Catatan Presensi</th><th>Kehadiran</th></tr></thead><tbody>
+@foreach ($rows as $r)<tr><td class="nm">{{ $r['name'] }}</td><td>{{ $r['pembina'] }}</td><td>{{ $r['members'] }}</td><td>{{ $r['sessions'] }}</td><td>{{ $r['hadir'] }}/{{ $r['records'] }} hadir</td><td>{{ $r['pct'] !== null ? $r['pct'].'%' : '–' }}{!! \App\Support\Ui::bar($r['pct']) !!}</td></tr>@endforeach</tbody></table></div></div>
+@include('partials.print-sign', ['leftTitle' => 'Admin', 'leftName' => auth()->user()->name])
 @endsection

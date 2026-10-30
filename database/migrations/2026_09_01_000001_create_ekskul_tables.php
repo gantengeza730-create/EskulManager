@@ -8,7 +8,6 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Menambah kolom peran & data siswa pada tabel users bawaan Laravel
         Schema::table('users', function (Blueprint $t) {
             $t->string('role')->default('siswa')->after('password'); // admin | pembina | siswa
             $t->string('nis')->nullable()->unique()->after('role');
@@ -23,9 +22,9 @@ return new class extends Migration
             $t->string('name');
             $t->string('category')->default('Olahraga');
             $t->text('description')->nullable();
-            $t->text('requirements')->nullable();      // satu syarat per baris
+            $t->text('requirements')->nullable();
             $t->string('location')->nullable();
-            $t->string('schedule_text')->nullable();   // contoh: Selasa & Kamis, 15.00-17.30
+            $t->string('schedule_text')->nullable();
             $t->unsignedInteger('quota')->default(40);
             $t->string('color', 9)->default('#2563EB');
             $t->foreignId('pembina_id')->nullable()->constrained('users')->nullOnDelete();
@@ -38,7 +37,8 @@ return new class extends Migration
             $t->foreignId('user_id')->constrained()->cascadeOnDelete();
             $t->foreignId('ekskul_id')->constrained()->cascadeOnDelete();
             $t->text('reason')->nullable();
-            $t->string('status')->default('pending');  // pending | accepted | rejected
+            $t->string('status')->default('pending');   // pending | accepted | rejected
+            $t->text('reject_reason')->nullable();      // alasan penolakan dari pembina
             $t->timestamp('decided_at')->nullable();
             $t->timestamps();
             $t->unique(['user_id', 'ekskul_id']);
@@ -59,8 +59,10 @@ return new class extends Migration
             $t->date('date');
             $t->time('start_time');
             $t->time('end_time');
-            $t->string('type')->default('latihan');    // latihan | uji_tanding | lainnya
-            $t->string('status')->default('terjadwal'); // terjadwal | selesai | dibatalkan
+            $t->string('type')->default('latihan');      // latihan | uji_tanding | lainnya
+            $t->string('status')->default('terjadwal');  // terjadwal | selesai | dibatalkan
+            $t->boolean('is_fixed')->default(false);     // jadwal tetap (berulang tiap minggu)
+            $t->string('series')->nullable()->index();   // penanda satu rangkaian jadwal tetap
             $t->text('notes')->nullable();
             $t->timestamps();
         });
@@ -69,7 +71,7 @@ return new class extends Migration
             $t->id();
             $t->foreignId('schedule_id')->constrained()->cascadeOnDelete();
             $t->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $t->string('status')->default('hadir');    // hadir | izin | sakit | alpha
+            $t->string('status')->default('hadir');      // hadir | izin | sakit | alpha
             $t->timestamps();
             $t->unique(['schedule_id', 'user_id']);
         });
@@ -88,20 +90,29 @@ return new class extends Migration
             $t->unique(['ekskul_id', 'user_id']);
         });
 
+        // type=berita  -> ekskul_id = topik berita (null = Sekolah)
+        // type=pengumuman -> is_all = untuk seluruh sekolah, atau tujuan di tabel announcement_ekskul
         Schema::create('announcements', function (Blueprint $t) {
             $t->id();
             $t->foreignId('user_id')->constrained()->cascadeOnDelete();
             $t->foreignId('ekskul_id')->nullable()->constrained()->nullOnDelete();
-            $t->string('type')->default('pengumuman'); // pengumuman | berita
+            $t->string('type')->default('pengumuman');
             $t->string('title');
             $t->text('body');
+            $t->boolean('is_all')->default(true);
             $t->timestamps();
+        });
+
+        Schema::create('announcement_ekskul', function (Blueprint $t) {
+            $t->foreignId('announcement_id')->constrained()->cascadeOnDelete();
+            $t->foreignId('ekskul_id')->constrained()->cascadeOnDelete();
+            $t->primary(['announcement_id', 'ekskul_id']);
         });
 
         Schema::create('galleries', function (Blueprint $t) {
             $t->id();
             $t->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $t->foreignId('ekskul_id')->nullable()->constrained()->nullOnDelete();
+            $t->foreignId('ekskul_id')->nullable()->constrained()->nullOnDelete(); // null = Sekolah
             $t->string('title');
             $t->text('description')->nullable();
             $t->string('image_path');
@@ -127,11 +138,18 @@ return new class extends Migration
             $t->timestamp('read_at')->nullable();
             $t->timestamps();
         });
+
+        Schema::create('settings', function (Blueprint $t) {
+            $t->id();
+            $t->string('key')->unique();
+            $t->text('value')->nullable();
+            $t->timestamps();
+        });
     }
 
     public function down(): void
     {
-        foreach (['app_notifications','certificates','galleries','announcements','assessments','attendances','schedules','rooms','registrations','ekskuls'] as $tbl) {
+        foreach (['settings','app_notifications','certificates','galleries','announcement_ekskul','announcements','assessments','attendances','schedules','rooms','registrations','ekskuls'] as $tbl) {
             Schema::dropIfExists($tbl);
         }
         Schema::table('users', function (Blueprint $t) {

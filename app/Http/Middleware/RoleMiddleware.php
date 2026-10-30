@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-/** Membatasi akses route berdasarkan peran. Contoh: ->middleware('role:admin,pembina') */
 class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, string ...$roles)

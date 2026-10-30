@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-/** Manajemen data pengguna: admin mengelola siswa & pembina. */
 class UserController extends Controller
 {
     public function index(Request $request)
@@ -21,29 +20,23 @@ class UserController extends Controller
         return view('admin.users-index', compact('items', 'role', 'q'));
     }
 
-    public function create()
-    {
-        return view('admin.users-form', ['user' => new User(['role' => 'siswa', 'is_active' => true])]);
-    }
+    public function create() { return view('admin.users-form', ['user' => new User(['role' => 'siswa', 'is_active' => true])]); }
 
     public function store(Request $request)
     {
         $data = $this->validated($request);
-        $data['email_verified_at'] = now(); // dibuat admin -> dianggap terverifikasi
+        $data['email_verified_at'] = now();
         User::create($data);
         return redirect()->route('admin.pengguna.index')->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
-    public function edit(User $user)
-    {
-        return view('admin.users-form', compact('user'));
-    }
+    public function edit(User $user) { return view('admin.users-form', compact('user')); }
 
     public function update(Request $request, User $user)
     {
         $data = $this->validated($request, $user);
         if (empty($data['password'])) unset($data['password']);
-        if ($user->id === auth()->id()) { unset($data['role']); $data['is_active'] = true; } // cegah admin mengunci dirinya
+        if ($user->id === auth()->id()) { unset($data['role']); $data['is_active'] = true; }
         $user->update($data);
         return redirect()->route('admin.pengguna.index')->with('success', 'Data pengguna diperbarui.');
     }
@@ -61,9 +54,9 @@ class UserController extends Controller
             'name' => 'required|string|max:100',
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user?->id)],
             'role' => 'required|in:admin,pembina,siswa',
-            'nis' => ['nullable', 'string', 'max:30', Rule::unique('users', 'nis')->ignore($user?->id)],
-            'kelas' => 'nullable|string|max:30',
-            'phone' => 'nullable|string|max:20',
+            'nis' => ['required', 'string', 'max:30', Rule::unique('users', 'nis')->ignore($user?->id)],
+            'kelas' => 'required_if:role,siswa|nullable|string|max:30',
+            'phone' => 'required|string|max:20',
             'password' => [$user ? 'nullable' : 'required', 'string', 'min:8'],
         ]);
         $data['is_active'] = $request->boolean('is_active');

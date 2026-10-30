@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 /* ---------- Publik ---------- */
 Route::get('/', [LandingController::class, 'home'])->name('home');
 Route::get('/ekskul/{ekskul}', [LandingController::class, 'show'])->name('ekskul.show');
+Route::get('/sampai-jumpa', fn () => view('auth.logout-selesai'))->name('logout.selesai');
 
 /* ---------- Autentikasi ---------- */
 Route::middleware('guest')->group(function () {
@@ -27,21 +28,17 @@ Route::post('/keluar', [AuthController::class, 'logout'])->middleware('auth')->n
 /* ---------- Area login (semua peran) ---------- */
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [SharedController::class, 'dashboardRedirect'])->name('dashboard');
-
     Route::get('/notifikasi', [SharedController::class, 'notifications'])->name('notifikasi.index');
     Route::get('/notifikasi/baca-semua', [SharedController::class, 'readAll'])->name('notifikasi.readall');
     Route::get('/notifikasi/{id}', [SharedController::class, 'readOne'])->name('notifikasi.read');
-
     Route::get('/profil', [SharedController::class, 'profile'])->name('profil.edit');
     Route::put('/profil', [SharedController::class, 'updateProfile'])->name('profil.update');
-
     Route::get('/jadwal', [SharedController::class, 'schedules'])->name('jadwal.index');
     Route::get('/kalender', [SharedController::class, 'calendar'])->name('kalender.index');
     Route::get('/pengumuman', [SharedController::class, 'announcements'])->name('pengumuman.index');
     Route::get('/galeri', [SharedController::class, 'gallery'])->name('galeri.index');
     Route::get('/sertifikat/{certificate}/cetak', [SharedController::class, 'printCertificate'])->name('sertifikat.cetak');
 
-    // Admin & pembina boleh menerbitkan pengumuman/berita dan mengunggah galeri
     Route::middleware('role:admin,pembina')->group(function () {
         Route::post('/pengumuman', [SharedController::class, 'storeAnnouncement'])->name('pengumuman.store');
         Route::delete('/pengumuman/{announcement}', [SharedController::class, 'destroyAnnouncement'])->name('pengumuman.destroy');
@@ -86,4 +83,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/sertifikat', [Admin\CertificateController::class, 'index'])->name('sertifikat.index');
     Route::post('/sertifikat', [Admin\CertificateController::class, 'store'])->name('sertifikat.store');
     Route::delete('/sertifikat/{certificate}', [Admin\CertificateController::class, 'destroy'])->name('sertifikat.destroy');
+    Route::get('/sekolah', [Admin\SchoolController::class, 'edit'])->name('sekolah.edit');
+    Route::put('/sekolah', [Admin\SchoolController::class, 'update'])->name('sekolah.update');
 });

@@ -8,7 +8,6 @@ use App\Models\Ekskul;
 use App\Support\Notifier;
 use Illuminate\Http\Request;
 
-/** Generate piagam/sertifikat keikutsertaan (satu siswa atau seluruh anggota). */
 class CertificateController extends Controller
 {
     public function index()
@@ -22,23 +21,16 @@ class CertificateController extends Controller
     {
         $data = $request->validate([
             'ekskul_id' => 'required|exists:ekskuls,id',
-            'user_id' => 'nullable|exists:users,id',      // kosong = seluruh anggota
+            'user_id' => 'required',           // 'all' = seluruh anggota
             'title' => 'required|string|max:150',
             'issued_at' => 'required|date',
-        ]);
+        ], ['user_id.required' => 'Pilih penerima sertifikat.']);
         $ekskul = Ekskul::findOrFail($data['ekskul_id']);
-        $recipients = $data['user_id']
-            ? $ekskul->members()->where('users.id', $data['user_id'])->get()
-            : $ekskul->members;
-
+        $recipients = $data['user_id'] === 'all' ? $ekskul->members : $ekskul->members()->where('users.id', $data['user_id'])->get();
         if ($recipients->isEmpty()) return back()->with('error', 'Tidak ada anggota yang dapat menerima sertifikat.');
 
         foreach ($recipients as $u) {
-            $c = Certificate::create([
-                'number' => $this->makeNumber($ekskul),
-                'user_id' => $u->id, 'ekskul_id' => $ekskul->id,
-                'title' => $data['title'], 'issued_at' => $data['issued_at'],
-            ]);
+            $c = Certificate::create(['number' => $this->makeNumber($ekskul), 'user_id' => $u->id, 'ekskul_id' => $ekskul->id, 'title' => $data['title'], 'issued_at' => $data['issued_at']]);
             Notifier::send($u, 'Sertifikat baru diterbitkan', $data['title'] . ' — ' . $ekskul->name, route('sertifikat.cetak', $c));
         }
         return back()->with('success', $recipients->count() . ' sertifikat berhasil diterbitkan.');

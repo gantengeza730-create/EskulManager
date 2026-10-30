@@ -10,20 +10,11 @@ use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
-    public function showLogin()
-    {
-        return view('auth.login');
-    }
+    public function showLogin() { return view('auth.login'); }
 
     public function login(Request $request)
     {
-        $data = $request->validate([
-            'email' => 'required|string',
-            'password' => 'required|string',
-            'as' => 'required|in:siswa,pembina,admin',
-        ]);
-
-        // Siswa boleh login memakai email atau NIS
+        $data = $request->validate(['email' => 'required|string', 'password' => 'required|string', 'as' => 'required|in:siswa,pembina,admin']);
         $field = filter_var($data['email'], FILTER_VALIDATE_EMAIL) ? 'email' : 'nis';
         $user = User::where($field, $data['email'])->first();
 
@@ -31,26 +22,18 @@ class AuthController extends Controller
             return back()->withInput($request->only('email', 'as'))->withErrors(['email' => 'Email/NIS atau kata sandi salah.']);
         }
         if ($user->role !== $data['as']) {
-            return back()->withInput($request->only('email', 'as'))
-                ->withErrors(['email' => 'Akun ini bukan akun ' . ucfirst($data['as']) . '. Pilih tab peran yang sesuai.']);
+            return back()->withInput($request->only('email', 'as'))->withErrors(['email' => 'Akun ini bukan akun ' . ucfirst($data['as']) . '. Pilih tab peran yang sesuai.']);
         }
-        if (!$user->is_active) {
-            return back()->withErrors(['email' => 'Akun Anda dinonaktifkan. Hubungi admin sekolah.']);
-        }
+        if (!$user->is_active) return back()->withErrors(['email' => 'Akun Anda dinonaktifkan. Hubungi admin sekolah.']);
         if (!$user->email_verified_at) {
-            return redirect()->route('verify')->with('email', $user->email)
-                ->with('status', 'Akun belum diverifikasi. Masukkan kode verifikasi yang dikirim ke email Anda.');
+            return redirect()->route('verify')->with('email', $user->email)->with('status', 'Akun belum diverifikasi. Masukkan kode verifikasi yang dikirim ke email Anda.');
         }
-
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
         return redirect()->route('dashboard');
     }
 
-    public function showRegister()
-    {
-        return view('auth.register');
-    }
+    public function showRegister() { return view('auth.register'); }
 
     public function register(Request $request)
     {
@@ -58,27 +41,19 @@ class AuthController extends Controller
             'name' => 'required|string|max:100',
             'nis' => 'required|string|max:30|unique:users,nis',
             'kelas' => 'required|string|max:30',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'required|string|max:20',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
         ]);
-
-        $code = (string) random_int(100000, 999999);
-        $user = User::create($data + ['role' => 'siswa', 'verification_code' => $code]);
+        $user = User::create($data + ['role' => 'siswa', 'verification_code' => (string) random_int(100000, 999999)]);
         $this->sendCode($user);
-
-        return redirect()->route('verify')->with('email', $user->email)
-            ->with('status', 'Akun dibuat. Kami mengirim kode 6 digit ke email Anda.');
+        return redirect()->route('verify')->with('email', $user->email)->with('status', 'Akun dibuat. Kami mengirim kode 6 digit ke email Anda.');
     }
 
     public function showVerify(Request $request)
     {
         $email = session('email', old('email', $request->query('email')));
-        $devCode = null;
-        // Hanya untuk mode pengembangan: tampilkan kode agar mudah diuji tanpa SMTP
-        if (config('app.debug') && $email) {
-            $devCode = User::where('email', $email)->value('verification_code');
-        }
+        $devCode = (config('app.debug') && $email) ? User::where('email', $email)->value('verification_code') : null;
         return view('auth.verify', compact('email', 'devCode'));
     }
 
@@ -86,10 +61,7 @@ class AuthController extends Controller
     {
         $data = $request->validate(['email' => 'required|email', 'code' => 'required|digits:6']);
         $user = User::where('email', $data['email'])->first();
-
-        if (!$user || $user->verification_code !== $data['code']) {
-            return back()->withInput()->withErrors(['code' => 'Kode verifikasi salah.']);
-        }
+        if (!$user || $user->verification_code !== $data['code']) return back()->withInput()->withErrors(['code' => 'Kode verifikasi salah.']);
         $user->update(['email_verified_at' => now(), 'verification_code' => null]);
         return redirect()->route('login')->with('status', 'Akun berhasil diverifikasi. Silakan masuk.');
     }
@@ -107,18 +79,15 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $name = optional($request->user())->name;
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        // Setelah keluar, langsung kembali ke landing page (tanpa halaman login perantara)
-        return redirect()->route('home')->with('success', 'Anda telah keluar dari akun.');
+        return redirect()->route('logout.selesai')->with('bye_name', $name);   // layar perpisahan lalu ke landing page
     }
 
     private function sendCode(User $user): void
     {
-        // Dengan MAIL_MAILER=log, isi email tercatat di storage/logs/laravel.log
-        Mail::raw("Kode verifikasi akun Ekskul SMK Anda: {$user->verification_code}", function ($m) use ($user) {
-            $m->to($user->email)->subject('Kode Verifikasi Ekskul SMK');
-        });
+        Mail::raw("Kode verifikasi akun Ekskul SMK Anda: {$user->verification_code}", fn ($m) => $m->to($user->email)->subject('Kode Verifikasi Ekskul SMK'));
     }
 }

@@ -7,7 +7,6 @@ use App\Models\Registration;
 use App\Support\Notifier;
 use Illuminate\Http\Request;
 
-/** Tabel data pendaftar untuk ekskul binaan pembina. */
 class RegistrationController extends Controller
 {
     public function index(Request $request)
@@ -22,21 +21,24 @@ class RegistrationController extends Controller
     public function update(Request $request, Registration $registration)
     {
         abort_unless(in_array($registration->ekskul_id, auth()->user()->scopedEkskulIds(), true), 403);
-        $request->validate(['status' => 'required|in:accepted,rejected']);
-
-        if ($request->status === 'accepted' && $registration->status !== 'accepted'
-            && $registration->ekskul->memberCount() >= $registration->ekskul->quota) {
-            return back()->with('error', 'Kuota ekskul sudah penuh, tidak bisa menerima pendaftar baru.');
-        }
-
-        $registration->update(['status' => $request->status, 'decided_at' => now()]);
+        $request->validate([
+            'status' => 'required|in:accepted,rejected',
+            'reject_reason' => 'required_if:status,rejected|nullable|string|min:5|max:300',
+        ], ['reject_reason.required_if' => 'Alasan penolakan wajib diisi.', 'reject_reason.min' => 'Alasan penolakan minimal 5 karakter.']);
 
         $ok = $request->status === 'accepted';
+        if ($ok && $registration->status !== 'accepted' && $registration->ekskul->memberCount() >= $registration->ekskul->quota) {
+            return back()->with('error', 'Kuota ekskul sudah penuh, tidak bisa menerima pendaftar baru.');
+        }
+        $registration->update(['status' => $request->status, 'decided_at' => now(), 'reject_reason' => $ok ? null : $request->reject_reason]);
+
+        // Siswa SELALU diberi notifikasi, baik diterima maupun ditolak (beserta alasannya)
         Notifier::send($registration->user,
             $ok ? 'Pendaftaran diterima 🎉' : 'Pendaftaran ditolak',
-            'Pendaftaran Anda ke ' . $registration->ekskul->name . ($ok ? ' telah diterima.' : ' belum dapat diterima.'),
+            $ok ? 'Pendaftaran Anda ke ' . $registration->ekskul->name . ' telah diterima.'
+                : 'Pendaftaran Anda ke ' . $registration->ekskul->name . ' ditolak. Alasan: ' . $request->reject_reason,
             route('siswa.ekskul.index'));
 
-        return back()->with('success', $registration->user->name . ($ok ? ' diterima.' : ' ditolak.'));
+        return back()->with('success', $registration->user->name . ($ok ? ' diterima.' : ' ditolak dan sudah diberi notifikasi.'));
     }
 }
